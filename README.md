@@ -1,2 +1,2 @@
-# Grupo 07
+# Repositório do Grupo 07
 
