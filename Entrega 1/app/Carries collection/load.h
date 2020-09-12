@@ -1,9 +1,4 @@
-typedef struct {
-  int id;
-  char title[50];
-  int year;
-  int quantity;
-  char category[20];
-} movie;
+#include "../../utils/linkedList.h"
 
-void readFile(char* path, movie moviesArray[]);
+// reads from a .txt file and saves results to a linked list
+void readFile(char *path, node_t *moviesList);

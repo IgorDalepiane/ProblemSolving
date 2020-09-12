@@ -1,19 +1,18 @@
-#include "load.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-// #include "linkedList.h"
+#include "load.h"
 
 int main() {
-  // node_t *head = (node_t *)malloc(sizeof(node_t)); // start linked list
-  movie moviesArray[41];
-  readFile("Entrega 1/Assets/entrada.txt", moviesArray);
+  node_t *head = (node_t *)malloc(sizeof(node_t)); // start of the linked list
+  // movie_t moviesArray[41];
+  readFile("Entrega 1/Assets/entrada.txt", head);
+  printFromList(head);
   exit(EXIT_SUCCESS);
 }
 
-void readFile(char *path, movie moviesArray[]) {
+void readFile(char *path, node_t *moviesList) {
   FILE *entrada = fopen(path, "r");
 
   char *token;
@@ -21,7 +20,7 @@ void readFile(char *path, movie moviesArray[]) {
   char *line = NULL;
   size_t length = 1024;
   ssize_t read;
-  movie actualMovie;
+  movie_t currentMovie;
   int counter;
 
   line = (char *)malloc(length * sizeof(char));
@@ -36,20 +35,21 @@ void readFile(char *path, movie moviesArray[]) {
         continue;
       }
 
-      moviesArray[counter].id = counter + 1;
+      currentMovie.id = counter + 1;
       token = strtok(line, ";"); // start reading line
-      strcpy(moviesArray[counter].title, token);
+      strcpy(currentMovie.title, token);
       token = strtok(NULL, ";"); // jump to next token
-      moviesArray[counter].year = atoi(token);
+      currentMovie.year = atoi(token);
       token = strtok(NULL, ";"); // jump to next token
-      moviesArray[counter].quantity = atoi(token);
+      currentMovie.quantity = atoi(token);
       token = strtok(NULL, ";"); // jump to next token
-      strcpy(moviesArray[counter].category, token);
+      strcpy(currentMovie.category, token);
 
+      pushToList(moviesList, currentMovie);
       counter++;
     }
   }
-
+  removeLastFromList(moviesList); // it's the head's malloc, just zeroes and \00
   fclose(entrada);
   free(line);
 }
