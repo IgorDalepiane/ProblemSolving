@@ -30,6 +30,32 @@ void printFromList(node_t *head) {
   }
 }
 
+void printSingleMovieDetailsFromList(node_t *head, int id) {
+  node_t *current = head;
+  int position = 0;
+
+  if (head == NULL) {
+    printf("A lista nao foi inicializada");
+    return;
+  }
+
+  while (current->next != NULL) {
+    if (current->m.id == id) {
+      printf("\n=================================================\nCod: "
+             "%d\nTítulo: %s\nAno de lançamento: %d\nQuantidade em estoque: "
+             "%d\nCategoria: %s",
+             current->m.id, current->m.title, current->m.year,
+             current->m.quantity, current->m.category);
+      return;
+    }
+
+    current = current->next;
+    position++;
+  }
+
+  printf("\nNenhum filme com este id foi encontrado");
+}
+
 void pushToList(node_t *head, movie_t movie) {
   node_t *current = head;
   while (current->next != NULL) {
