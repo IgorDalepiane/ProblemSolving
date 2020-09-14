@@ -17,6 +17,10 @@
 void printFromList(node_t *head) {
   node_t *current = head;
   while (current != NULL) {
+    // do not print the last item since it's just 0's and \00
+    if (current->next == NULL) {
+      break;
+    }
     printf("=================================================\nCod: "
            "%d\nTítulo: %s\nAno de lançamento: %d\nQuantidade em estoque: "
            "%d\nCategoria: %s",

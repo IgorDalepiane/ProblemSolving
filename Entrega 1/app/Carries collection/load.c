@@ -49,7 +49,6 @@ void readFile(char *path, node_t *moviesList) {
       counter++;
     }
   }
-  removeLastFromList(moviesList); // it's the head's malloc, just zeroes and \00
   fclose(entrada);
   free(line);
 }
