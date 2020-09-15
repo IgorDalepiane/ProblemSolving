@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "./Carries collection/load.h"
 #include "./Backup/backup.h"
 
 void pressKeyToContinue() {
