@@ -7,19 +7,6 @@
 
 FILE *file_pointer;
 char systemDate[6];
-void getSystemDate();
-void makeBackup();
-
-int main(void){
-
-    getSystemDate();
-
-    node_t *head = (node_t *)malloc(sizeof(node_t));
-    readFile("Assets/entrada.txt", head);
-    
-    makeBackup(head);
-
-}
 
 void getSystemDate(){
     time_t timeT;
@@ -38,6 +25,10 @@ void getSystemDate(){
 }
 
 void makeBackup(node_t *moviesList){
+    printf("\n Realizando Backup...\n");
+
+    getSystemDate();
+
     node_t *current = moviesList;
     
     char file_name[25] = "Assets\\backup ";

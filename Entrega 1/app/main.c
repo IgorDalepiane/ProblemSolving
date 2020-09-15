@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "./Carries collection/load.h"
+#include "./Backup/backup.h"
 
 void pressKeyToContinue() {
   printf("\nDigite qualquer coisa para continuar...\n");
@@ -79,7 +80,7 @@ void menu(node_t *head) {
 
   // Complete collection
   case 6:
-    printf("Funcionalidade em desenvolvimento..\n");
+    makeBackup(head);
     pressKeyToContinue();
     menu(head);
 
