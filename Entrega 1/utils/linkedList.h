@@ -19,3 +19,5 @@ void pushToList(node_t *head, movie_t movie); // add after the last
 void printFromList(node_t *head);
 
 void removeLastFromList(node_t *head);
+/* Searches for movies in the list according to the parameter */
+node_t *searchFromList(node_t *head, char *data);
