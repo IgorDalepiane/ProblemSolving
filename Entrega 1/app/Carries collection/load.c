@@ -4,15 +4,6 @@
 
 #include "load.h"
 
-int main() {
-  node_t *head = (node_t *)malloc(sizeof(node_t)); // start of the linked list
-  // movie_t moviesArray[41];
-  readFile("Entrega 1/Assets/entrada.txt", head);
-  printFromList(head); //show all movies details
-  printSingleMovieDetailsFromList(head, 4); // show single movie details
-  exit(EXIT_SUCCESS);
-}
-
 void readFile(char *path, node_t *moviesList) {
   FILE *entrada = fopen(path, "r");
 
