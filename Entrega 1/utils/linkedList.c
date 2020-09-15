@@ -1,7 +1,9 @@
 #include "linkedList.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // void pushToList(node_t *head, movie_t movie) {
 //   node_t *current = head;
@@ -28,6 +30,33 @@ void printFromList(node_t *head) {
            current->m.quantity, current->m.category);
     current = current->next;
   }
+}
+
+node_t *searchFromList(node_t *head, char *data) {
+  /* List declaration for return */
+  node_t *response = (node_t *)malloc(sizeof(node_t));
+
+  node_t *current = head;
+
+  /* Turns search into uppercase for comparison */
+  char *dataUpper = data;
+  while (*dataUpper) {
+    *dataUpper = toupper((unsigned char)*dataUpper);
+    dataUpper++;
+  }
+
+  while (current->next != NULL) {
+    /* If any information from the current movie is compatible with the search,
+     * add it to the return */
+    if (strstr(current->m.title, data) != NULL ||
+        strstr(current->m.category, data) != NULL ||
+        current->m.year == atoi(data) || current->m.id == atoi(data)) {
+      pushToList(response, current->m);
+    }
+    current = current->next;
+  }
+
+  return response;
 }
 
 void printSingleMovieDetailsFromList(node_t *head, int id) {
