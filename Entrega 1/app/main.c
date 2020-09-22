@@ -40,35 +40,34 @@ void menu(node_t *head) {
       scanf("%s", searchTerms);
 
       node_t *results = (node_t *)malloc(sizeof(node_t));
-      // Lista para resetar o while
+      // List to reset the while
       node_t *resultsAux = (node_t *)malloc(sizeof(node_t));
       int id = 0;
-      results = searchFromList(head, searchTerms); // Mostra resultados da busca
+      results = searchFromList(head, searchTerms); // Shows search results
       resultsAux = results;
 
       char correctSearch = 's';
       if (results->m.id != 0) {
         printFromList(results);
-        // Para o caso de o usuario errar o nome do filme e querer buscar por
-        // outro
+        // In case the user misses the name of the film and wants to look for another one
         printf("\nO filme que você quer alugar está na lista? [s/n]: ");
         scanf(" %c", &correctSearch);
         if (correctSearch == 'n') {
           continue;
         }
         int found;
-        // Controle do loop se o id for inexistente ou fora de estoque
+        // Loop control if the id is nonexistent or out of stock
         int repeatId;
         do {
           found = 0;
           repeatId = 1;
-          // Para o caso de existirem mais resultados na busca
+          // In case there are more search results
           printf("\nDigite o código do filme escolhido: ");
           scanf("%d", &id);
           while (results->next != NULL) {
             if (results->m.id == id) {
               found = 1;
-              // Verifica se o filme esta no estoque
+              // Checks whether the film is in stock
               if (results->m.quantity != 0) {
                 repeatId = 0;
                 rent(head, id);
@@ -148,6 +147,7 @@ void menu(node_t *head) {
 
   // Complete collection
   case 6:
+    //make data with de head list
     makeBackup(head);
     pressKeyToContinue();
     menu(head);
@@ -159,7 +159,7 @@ void menu(node_t *head) {
 }
 
 int main() {
-  // Aloca espaço para o começo da lista
+  // Allocates space to the beginning of the list
   node_t *head = (node_t *)malloc(sizeof(node_t));
   // movie_t moviesArray[41];
   readFile("Assets/entrada.txt", head);

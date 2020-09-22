@@ -8,6 +8,7 @@
 FILE *file_pointer;
 char systemDate[6];
 
+/* concatenates a number with a string */
 char *my_itoa(int num, char *str) {
   if (str == NULL) {
     return NULL;
@@ -16,6 +17,7 @@ char *my_itoa(int num, char *str) {
   return str;
 }
 
+/* Get current system date to insert on path of file .txt */
 void getSystemDate() {
   time_t timeT;
   timeT = time(NULL);
@@ -32,6 +34,7 @@ void getSystemDate() {
   strcat(systemDate, current_month);
 }
 
+/* make all process of backup */
 void makeBackup(node_t *moviesList) {
   printf("\n Realizando Backup...\n");
 
@@ -43,8 +46,11 @@ void makeBackup(node_t *moviesList) {
   strcat(file_name, systemDate);
   strcat(file_name, ".txt");
 
+  // create a file to write new backup
   if ((file_pointer = fopen(file_name, "w")) != NULL) {
     int countMovies = 0;
+
+    // scrolls through the list of films
     while (current != NULL) {
       if (current->next == NULL)
         break;
