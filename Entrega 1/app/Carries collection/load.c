@@ -8,7 +8,6 @@ void readFile(char *path, node_t *moviesList) {
   FILE *entrada = fopen(path, "r");
 
   char *token;
-  char delim = ';';
   char *line = NULL;
   size_t length = 1024;
   ssize_t read;
