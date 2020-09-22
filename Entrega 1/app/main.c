@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "./Location/rent.h"
+#include "./Devolution/devolution.h"
 
 void pressKeyToContinue() {
   printf("\nDigite qualquer coisa para continuar...\n");
@@ -93,7 +93,22 @@ void menu(node_t *head) {
 
   // Devolution
   case 2:
-    printf("Funcionalidade em desenvolvimento..\n");
+    int id;
+    printf("\nDigite o código do filme escolhido: ");
+    scanf("%d", &id);
+    int searchResult;
+    searchResult = searchIdOnFile(id);
+    if(searchResult == -2){
+		  printf("\nOps, tem certeza que digitou o id correto?\n");
+    }else if (searchResult == -1) {
+		  printf("\nOps, parece que ainda nao ha nenhuma locacao\n");
+    }else if(searchResult >=0){
+      if(deleteLineInFile(searchResult)>0){
+        devolution(head, id);
+		    printf("\nINTERNAL SERVER ERROR\n");
+      }
+    } 
+
     pressKeyToContinue();
     menu(head);
 
@@ -124,6 +139,7 @@ void menu(node_t *head) {
   // Print
   case 4:
     do {
+      int movieCode;
       system("clear");
       printf(
           "Você pode pesquisar os detalhes de um filme através do seu código.\n");
