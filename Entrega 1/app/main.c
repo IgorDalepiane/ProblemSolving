@@ -25,6 +25,7 @@ void menu(node_t *head) {
 
   /* Declaration of variables */
   int op;
+  int movieCode;
   char searchTerms[100];
   scanf("%d", &op);
 
