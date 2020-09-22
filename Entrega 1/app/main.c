@@ -121,12 +121,24 @@ void menu(node_t *head) {
     }
     pressKeyToContinue();
     menu(head);
+    
   // Print
   case 4:
-    // printFromList(head);                      // show all movies details
-    printSingleMovieDetailsFromList(head, 4); // show single movie details
-    pressKeyToContinue();
-    menu(head);
+    do {
+      system("clear");
+      printf(
+          "Você pode pesquisar os detalhes de um filme através do seu código.\n");
+      printf("Digite aqui o código do filme desejado: ");
+      scanf("%d", &movieCode);
+
+      printSingleMovieDetailsFromList(head, movieCode);
+
+      printf("\nDeseja consultar os detalhes de outro filme? [s/n]: ");
+          scanf(" %c", &repeat);
+          printf("\n");
+
+    } while(repeat == 's');
+      menu(head);
 
   // Reports
   case 5:
