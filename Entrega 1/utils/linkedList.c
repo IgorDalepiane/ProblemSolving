@@ -70,7 +70,7 @@ void printSingleMovieDetailsFromList(node_t *head, int id) {
 
   while (current->next != NULL) {
     if (current->m.id == id) {
-      printf("\n=================================================\nCod: "
+      printf("\nCod: "
              "%d\nTítulo: %s\nAno de lançamento: %d\nQuantidade em estoque: "
              "%d\nCategoria: %s",
              current->m.id, current->m.title, current->m.year,
@@ -82,7 +82,7 @@ void printSingleMovieDetailsFromList(node_t *head, int id) {
     position++;
   }
 
-  printf("\nNenhum filme com este id foi encontrado");
+  printf("\nNenhum filme com este código foi encontrado.\n");
 }
 
 void pushToList(node_t *head, movie_t movie) {
