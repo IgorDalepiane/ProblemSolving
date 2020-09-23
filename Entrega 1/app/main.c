@@ -95,7 +95,7 @@ void menu(node_t *head) {
   // Devolution
   case 2:
     int id;
-    printf("\nDigite o código do filme escolhido: ");
+    printf("\nDigite o código do filme locado: ");
     scanf("%d", &id);
     int searchResult;
     searchResult = searchIdOnFile(id);

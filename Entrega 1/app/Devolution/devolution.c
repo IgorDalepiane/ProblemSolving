@@ -5,20 +5,17 @@
 #define MAX 256
 
 void devolution(node_t *head, int id) {
-    // Modificação da entrada.txt
+    // modification entrada.txt
     FILE *entrada = fopen("Assets/entrada.txt", "w+");
 
-    // Arquivo para salvar o historico de locações
-    FILE *rentHistory = fopen("Assets/rentHistory.txt", "a+");
     int count = 0;
 
-    // Define valores na primeira linha para serem substituidos pelo count quando o loop ser finalizado
+    // Set values ​​on the first line to be replaced by counting when the loop ends
     fprintf(entrada, "00\n");
 
     while (head -> next != NULL) {
         if (head -> m.id == id) {
-            // Adiciona o id do filme que foi retirado, no arquivo rentHistory
-            fprintf(rentHistory, "%d\n", head->m.id);
+            // make add one quantity in specific movie
             head->m.quantity += 1;
             printf("\"%s\" foi devolvido com sucesso.\n", head->m.title);
         }
@@ -29,18 +26,18 @@ void devolution(node_t *head, int id) {
         count++;
     }
 
-    // Bota o cursor no começo do arquivo
+    // Put the cursor at the beginning of the file
     fseek(entrada, 0, SEEK_SET);
     fprintf(entrada, "%d", count);
 
     fclose(entrada);
-    fclose(rentHistory);
 }
 
 // Seach if exist id of devolution on file rentHistory
 int searchIdOnFile(char *id) {
 	FILE *rentHistory;
 	int line_num = 1;
+	int line_specifc = 0;
 	int find_result = 0;
 	char temp[10];
 
@@ -53,6 +50,7 @@ int searchIdOnFile(char *id) {
 	while(fgets(temp, 10, rentHistory) != NULL) {
 		if((strstr(temp, id)) != NULL) {
 			printf("Encontramos o registro da sua locacao: %d\n", line_num);
+            line_specifc = line_num;
 			printf("\n%s\n", temp);
 			find_result++;
 		}
@@ -68,7 +66,7 @@ int searchIdOnFile(char *id) {
 	if(find_result == 0) {
         return -2;
 	} else {
-        return line_num;
+        return line_specifc;
     }
 	
    	return(0);
