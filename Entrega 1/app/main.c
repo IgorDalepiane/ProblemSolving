@@ -99,14 +99,15 @@ void menu(node_t *head) {
     scanf("%d", &id);
     int searchResult;
     searchResult = searchIdOnFile(id);
-    if(searchResult == -2){
-		  printf("\nOps, tem certeza que digitou o id correto?\n");
-    }else if (searchResult == -1) {
+    if(searchResult == -1){
 		  printf("\nOps, parece que ainda nao ha nenhuma locacao\n");
+    }else if (searchResult == -2) {
+		  printf("\nOps, tem certeza que digitou o id correto?\n");
     }else if(searchResult >=0){
       if(deleteLineInFile(searchResult)>0){
         devolution(head, id);
-		    printf("\nINTERNAL SERVER ERROR\n");
+      }else{
+        printf("\nINTERNAL SERVER ERROR\n");
       }
     } 
 

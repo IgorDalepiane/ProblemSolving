@@ -68,8 +68,6 @@ int searchIdOnFile(char *id) {
 	} else {
         return line_specifc;
     }
-	
-   	return(0);
 }
 
 // delete the line references of location in rentHistory
