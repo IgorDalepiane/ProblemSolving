@@ -5,17 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// void pushToList(node_t *head, movie_t movie) {
-//   node_t *current = head;
-//   while (current->next != NULL) {
-//     current = current->next;
-//   }
-
-//   current->next = (node_t *)malloc(sizeof(node_t));
-//   current->next->m = movie;
-//   current->next->next = NULL;
-// }
-
 void printFromList(node_t *head) {
   node_t *current = head;
   while (current != NULL) {
@@ -113,12 +102,3 @@ void removeLastFromList(node_t *head) {
   free(current->next);
   current->next = NULL;
 }
-
-// add before the last
-// void pushToList(node_t **head, movie_t movie) {
-//   node_t *newNode;
-//   newNode = (node_t *)malloc(sizeof(node_t));
-//   newNode->m = movie;
-//   newNode->next = *head;
-//   *head = newNode;
-// }

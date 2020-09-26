@@ -93,10 +93,10 @@ void menu(node_t *head) {
     menu(head);
 
   // Devolution
-  case 2:
-    int id;
+  case 2:;
+    char id[10];
     printf("\nDigite o código do filme locado: ");
-    scanf("%d", &id);
+    scanf("%s", id);
     int searchResult;
     searchResult = searchIdOnFile(id);
     if(searchResult == -1){
@@ -105,7 +105,7 @@ void menu(node_t *head) {
 		  printf("\nOps, tem certeza que digitou o id correto?\n");
     }else if(searchResult >=0){
       if(deleteLineInFile(searchResult)>0){
-        devolution(head, id);
+        devolution(head, atoi(id));
       }else{
         printf("\nINTERNAL SERVER ERROR\n");
       }
@@ -141,7 +141,7 @@ void menu(node_t *head) {
   // Print
   case 4:
     do {
-      int movieCode;
+      int movieCode = 0;
       system("clear");
       printf(
           "Você pode pesquisar os detalhes de um filme através do seu código.\n");
