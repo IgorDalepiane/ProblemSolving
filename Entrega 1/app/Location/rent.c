@@ -4,7 +4,7 @@
 
 void rent(node_t *head, int id) {
   // Modificação da entrada.txt
-  FILE *entrada = fopen("Assets/entrada.txt", "w+");
+  FILE *entrada = fopen("Assets/entrada_mod.txt", "w+");
   // Arquivo para salvar o historico de locações
   FILE *rentHistory = fopen("Assets/rentHistory.txt", "a+");
   int count = 0;

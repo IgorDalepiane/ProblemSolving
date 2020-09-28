@@ -7,7 +7,7 @@
 
 void devolution(node_t *head, int id) {
     // modification entrada.txt
-    FILE *entrada = fopen("Assets/entrada.txt", "w+");
+    FILE *entrada = fopen("Assets/entrada_mod.txt", "w+");
 
     int count = 0;
 

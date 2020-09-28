@@ -180,7 +180,7 @@ int main() {
   // Allocates space to the beginning of the list
   node_t *head = (node_t *)malloc(sizeof(node_t));
   // movie_t moviesArray[41];
-  readFile("Assets/entrada.txt", head);
+  readFile("Assets/entrada_mod.txt", head);
 
   // First program entry
   printf("##########################################\n");
