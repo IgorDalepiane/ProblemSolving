@@ -158,8 +158,25 @@ void menu(node_t *head) {
       menu(head);
 
   // Reports
-  case 5:
-    printf("Funcionalidade em desenvolvimento..\n");
+case 5:;
+    char reportTerms[100];
+    system("clear");
+    printf("Você pode gerar relatórios por Gênero e por Ano.\n");
+    printf("Digite aqui: ");
+    scanf("%s", reportTerms);
+
+    // List of search results declaration
+    node_t *reportResults = (node_t *)malloc(sizeof(node_t));
+    // Perform the search
+    reportResults = report(head, reportTerms);
+
+    // If the list is not null, print it
+    if (reportResults->m.id != 0) {
+      printf("\n");
+      printFromList(reportResults);
+    } else {
+      printf("\nNenhum resultado foi encontrado.\n");
+    }
     pressKeyToContinue();
     menu(head);
 

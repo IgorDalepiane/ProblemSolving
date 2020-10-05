@@ -25,3 +25,5 @@ void printSingleMovieDetailsFromList(node_t *head, int id);
 void removeLastFromList(node_t *head);
 /* Searches for movies in the list according to the parameter */
 node_t *searchFromList(node_t *head, char *data);
+
+node_t *report(node_t *head, char *data);
