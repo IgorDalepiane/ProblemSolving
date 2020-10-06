@@ -68,6 +68,115 @@ semestre7(administracao_e_empreendedorismo).
 semestre7(engenharia_economica).
 semestre7(etica_e_legislacao_em_computacao).
 
+/*Preferência 1*/
+
+preferencia1(professor1, matematica_discreta_es).
+
+preferencia1(professor2, arquitetura_e_organizacao_de_computadores_es).
+preferencia1(professor2, algoritmos_e_programacao_es).
+
+preferencia1(professor3, linguagens_formais_es).
+preferencia1(professor3, logica_matematica_es).
+preferencia1(professor3, etica_e_legislacao_em_computacao).
+preferencia1(professor3, matematica_discreta_es).
+
+preferencia1(professor4, algoritmos_e_programacao_es).
+preferencia1(professor4, arquitetura_e_organizacao_de_computadores_es).
+preferencia1(professor4, estruturas_de_dados_es).
+
+preferencia1(professor5, etica_e_legislacao_em_computacao).
+preferencia1(professor5, algoritmos_e_programacao_es).
+
+preferencia1(professor6, resolucao_de_problemas_i).
+preferencia1(professor6, resolucao_de_problemas_v).
+
+preferencia1(professor7, algoritmos_e_programacao_es).
+preferencia1(professor7, arquitetura_e_organizacao_de_computadores_es).
+
+preferencia1(professor8, algoritmos_e_programacao_es).
+preferencia1(professor8, arquitetura_e_organizacao_de_computadores_es).
+preferencia1(professor8, estruturas_de_dados_es).
+
+preferencia1(professor9, administracao_e_empreendedorismo).
+preferencia1(professor9, etica_e_legislacao_em_computacao).
+preferencia1(professor9, inovacao_e_criatividade).
+
+preferencia1(professor11, administracao_e_empreendedorismo).
+preferencia1(professor11, resolucao_de_problemas_i).
+
+preferencia1(professor12, analise_e_projeto_de_software).
+preferencia1(professor12, resolucao_de_problemas_v).
+preferencia1(professor12, algoritmos_e_programacao_es).
+
+preferencia1(professor13, analise_e_projeto_de_software).
+preferencia1(professor13, resolucao_de_problemas_i).
+
+preferencia1(professor14, algoritmos_e_programacao_es).
+preferencia1(professor14, estruturas_de_dados_es).
+
+preferencia1(professor15, analise_e_projeto_de_software).
+preferencia1(professor15, medicao_e_analise).
+preferencia1(professor15, resolucao_de_problemas_i).
+preferencia1(professor15, resolucao_de_problemas_iii).
+preferencia1(professor15, resolucao_de_problemas_v).
+
+preferencia1(professor16, linguagens_formais_es).
+preferencia1(professor16, logica_matematica_es).
+preferencia1(professor16, matematica_discreta_es).
+
+preferencia1(professor17, medicao_e_analise).
+preferencia1(professor17, resolucao_de_problemas_i).
+
+preferencia1(professor18, algoritmos_e_programacao_es).
+preferencia1(professor18, estruturas_de_dados_es).
+
+preferencia1(professor19, algoritmos_e_programacao_es).
+preferencia1(professor19, estruturas_de_dados_es).
+
+preferencia1(professor20, resolucao_de_problemas_i).
+preferencia1(professor20, algoritmos_e_programacao_es).
+
+preferencia1(professor21, algoritmos_e_programacao_es).
+preferencia1(professor21, redes_de_computadores_es).
+
+preferencia1(professor22, resolucao_de_problemas_i).
+preferencia1(professor22, resolucao_de_problemas_v).
+
+/*Preferência 2*/
+
+preferencia2(professor1, algoritmos_e_programacao_es).
+preferencia2(professor1, estruturas_de_dados_es).
+preferencia2(professor1, logica_matematica_es).
+
+preferencia2(professor2, estruturas_de_dados_es).
+preferencia2(professor2, logica_matematica_es).
+preferencia2(professor2, matematica_discreta_es).
+
+preferencia2(professor5, resolucao_de_problemas_i).
+
+preferencia2(professor7, estruturas_de_dados_es).
+
+preferencia2(professor10, redes_de_computadores_es).
+
+preferencia2(professor12, resolucao_de_problemas_i).
+preferencia2(professor12, estruturas_de_dados_es).
+
+preferencia2(professor13, resolucao_de_problemas_v).
+preferencia2(professor13, algoritmos_e_programacao_es).
+
+preferencia2(professor14, analise_e_projeto_de_software).
+preferencia2(professor14, resolucao_de_problemas_i).
+
+preferencia2(professor17, analise_e_projeto_de_software).
+
+preferencia2(professor20, analise_e_projeto_de_software).
+preferencia2(professor20, resolucao_de_problemas_iii).
+
+preferencia2(professor21, estruturas_de_dados_es).
+
+preferencia2(professor22, inovacao_e_criatividade).
+preferencia2(professor22, analise_e_projeto_de_software).
+
 /*Preferência 3*/
 
 preferencia3(professor2, resolucao_de_problemas_i).
