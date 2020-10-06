@@ -29,22 +29,22 @@ professor(professor22).
 
 /*Declaração das disciplinas*/
 
-disciplina(administracao_e_empreendedorismo).
-disciplina(engenharia_economica).
-disciplina(etica_e_legislacao_em_computacao).
-disciplina(inovacao_e_criatividade).
-disciplina(analise_e_projeto_de_software).
-disciplina(medicao_e_analise).
-disciplina(resolucao_de_problemas_i).
-disciplina(resolucao_de_problemas_iii).
-disciplina(resolucao_de_problemas_v).
-disciplina(algoritmos_e_programacao_es).
-disciplina(arquitetura_e_organizacao_de_computadores_es).
-disciplina(estruturas_de_dados_es).
-disciplina(linguagens_formais_es).
-disciplina(redes_de_computadores_es).
-disciplina(logica_matematica_es).
-disciplina(matematica_discreta_es).
+disciplina(administracao_e_empreendedorismo, 60).
+disciplina(engenharia_economica, 30).
+disciplina(etica_e_legislacao_em_computacao, 30).
+disciplina(inovacao_e_criatividade, 30).
+disciplina(analise_e_projeto_de_software, 60).
+disciplina(medicao_e_analise, 30).
+disciplina(resolucao_de_problemas_i, 120).
+disciplina(resolucao_de_problemas_iii, 120).
+disciplina(resolucao_de_problemas_v, 120).
+disciplina(algoritmos_e_programacao_es, 120).
+disciplina(arquitetura_e_organizacao_de_computadores_es, 30).
+disciplina(estruturas_de_dados_es, 60).
+disciplina(linguagens_formais_es, 60).
+disciplina(redes_de_computadores_es, 30).
+disciplina(logica_matematica_es, 60).
+disciplina(matematica_discreta_es, 60).
 
 /*Atribuição das disciplinas em seu respectivo semestre*/
 
@@ -60,12 +60,13 @@ semestre3(arquitetura_e_organizacao_de_computadores_es).
 semestre3(estruturas_de_dados_es).
 semestre3(linguagens_formais_es).
 
-semestre5(administracao_e_empreendedorismo).
-semestre5(engenharia_economica).
-semestre5(etica_e_legislacao_em_computacao).
 semestre5(medicao_e_analise).
 semestre5(resolucao_de_problemas_v).
 semestre5(redes_de_computadores_es).
+
+semestre7(administracao_e_empreendedorismo).
+semestre7(engenharia_economica).
+semestre7(etica_e_legislacao_em_computacao).
 
 /*Preferência 3*/
 
