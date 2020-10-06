@@ -67,6 +67,51 @@ semestre5(medicao_e_analise).
 semestre5(resolucao_de_problemas_v).
 semestre5(redes_de_computadores_es).
 
+/*Preferência 4*/
+
+preferencia4(professor2, administracao_e_empreendedorismo).
+preferencia4(professor2, inovacao_e_criatividade).
+
+preferencia4(professor4, redes_de_computadores_es).
+preferencia4(professor4, logica_matematica_es).
+
+preferencia4(professor5, inovacao_e_criatividade).
+preferencia4(professor5, resolucao_de_problemas_iii).
+preferencia4(professor5, resolucao_de_problemas_v).
+preferencia4(professor5, logica_matematica_es).
+preferencia4(professor5, matematica_discreta_es).
+
+preferencia4(professor6, etica_e_legislacao_em_computacao).
+preferencia4(professor6, inovacao_e_criatividade).
+preferencia4(professor6, medicao_e_analise).
+
+preferencia4(professor8, linguagens_formais_es).
+preferencia4(professor8, matematica_discreta_es).
+
+preferencia4(professor10, resolucao_de_problemas_i).
+preferencia4(professor10, resolucao_de_problemas_iii).
+
+preferencia4(professor12, linguagens_formais_es).
+
+preferencia4(professor13, medicao_e_analise).
+preferencia4(professor13, resolucao_de_problemas_iii).
+
+preferencia4(professor14, resolucao_de_problemas_iii).
+preferencia4(professor14, resolucao_de_problemas_v).
+
+preferencia4(professor17, linguagens_formais_es).
+preferencia4(professor17, logica_matematica_es).
+
+preferencia4(professor20, matematica_discreta_es).
+
+preferencia4(professor21, analise_e_projeto_de_software).
+preferencia4(professor21, medicao_e_analise).
+preferencia4(professor21, resolucao_de_problemas_i).
+preferencia4(professor21, resolucao_de_problemas_iii).
+preferencia4(professor21, resolucao_de_problemas_v).
+
+/*Preferência 5*/
+
 preferencia5(professor1, administracao_e_empreendedorismo).
 preferencia5(professor1, engenharia_economica).
 preferencia5(professor1, etica_e_legislacao_em_computacao).
