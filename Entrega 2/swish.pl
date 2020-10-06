@@ -67,6 +67,60 @@ semestre5(medicao_e_analise).
 semestre5(resolucao_de_problemas_v).
 semestre5(redes_de_computadores_es).
 
+/*Preferência 3*/
+
+preferencia3(professor2, resolucao_de_problemas_i).
+
+preferencia3(professor3, algoritmos_e_programacao_es).
+
+preferencia3(professor4, resolucao_de_problemas_iii).
+
+preferencia3(professor5, analise_e_projeto_de_software).
+preferencia3(professor5, estruturas_de_dados_es).
+
+preferencia3(professor6, analise_e_projeto_de_software).
+preferencia3(professor6, algoritmos_e_programacao_es).
+preferencia3(professor6, estruturas_de_dados_es).
+
+preferencia3(professor7, analise_e_projeto_de_software).
+
+preferencia3(professor8, redes_de_computadores_es).
+
+preferencia3(professor9, resolucao_de_problemas_i).
+
+preferencia3(professor10, inovacao_e_criatividade).
+preferencia3(professor10, algoritmos_e_programacao_es).
+preferencia3(professor10, estruturas_de_dados_es).
+
+preferencia3(professor11, analise_e_projeto_de_software).
+preferencia3(professor11, medicao_e_analise).
+preferencia3(professor11, resolucao_de_problemas_v).
+
+preferencia3(professor12, inovacao_e_criatividade).
+preferencia3(professor12, medicao_e_analise).
+preferencia3(professor12, resolucao_de_problemas_iii).
+
+preferencia3(professor13, estruturas_de_dados_es).
+
+preferencia3(professor14, etica_e_legislacao_em_computacao).
+
+preferencia3(professor15, algoritmos_e_programacao_es).
+preferencia3(professor15, estruturas_de_dados_es).
+
+preferencia3(professor17, administracao_e_empreendedorismo).
+preferencia3(professor17, resolucao_de_problemas_iii).
+preferencia3(professor17, resolucao_de_problemas_v).
+
+preferencia3(professor19, logica_matematica_es).
+
+preferencia3(professor20, resolucao_de_problemas_v).
+preferencia3(professor20, estruturas_de_dados_es).
+
+preferencia3(professor21, arquitetura_e_organizacao_de_computadores_es).
+
+preferencia3(professor22, administracao_e_empreendedorismo).
+preferencia3(professor22, medicao_e_analise).
+
 /*Preferência 4*/
 
 preferencia4(professor2, administracao_e_empreendedorismo).
