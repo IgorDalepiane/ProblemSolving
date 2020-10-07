@@ -25,48 +25,18 @@ professor(professor20).
 professor(professor21).
 professor(professor22).
 
-/*Duvida: numeração dos semestres 1,3,5..., como colocar a carga horaria*/
-
 /*Declaração das disciplinas*/
 
-disciplina(administracao_e_empreendedorismo, 60).
-disciplina(engenharia_economica, 30).
-disciplina(etica_e_legislacao_em_computacao, 30).
-disciplina(inovacao_e_criatividade, 30).
-disciplina(analise_e_projeto_de_software, 60).
-disciplina(medicao_e_analise, 30).
-disciplina(resolucao_de_problemas_i, 120).
-disciplina(resolucao_de_problemas_iii, 120).
-disciplina(resolucao_de_problemas_v, 120).
-disciplina(algoritmos_e_programacao_es, 120).
-disciplina(arquitetura_e_organizacao_de_computadores_es, 30).
-disciplina(estruturas_de_dados_es, 60).
-disciplina(linguagens_formais_es, 60).
-disciplina(redes_de_computadores_es, 30).
-disciplina(logica_matematica_es, 60).
-disciplina(matematica_discreta_es, 60).
-
-/*Atribuição das disciplinas em seu respectivo semestre*/
-
-semestre1(resolucao_de_problemas_i).
-semestre1(algoritmos_e_programacao_es).
-semestre1(logica_matematica_es).
-semestre1(matematica_discreta_es).
-
-semestre3(inovacao_e_criatividade).
-semestre3(analise_e_projeto_de_software).
-semestre3(resolucao_de_problemas_iii).
-semestre3(arquitetura_e_organizacao_de_computadores_es).
-semestre3(estruturas_de_dados_es).
-semestre3(linguagens_formais_es).
-
-semestre5(medicao_e_analise).
-semestre5(resolucao_de_problemas_v).
-semestre5(redes_de_computadores_es).
-
-semestre7(administracao_e_empreendedorismo).
-semestre7(engenharia_economica).
-semestre7(etica_e_legislacao_em_computacao).
+disciplina(inovacao_e_criatividade, 30, 3).
+disciplina(analise_e_projeto_de_software, 60, 3).
+disciplina(resolucao_de_problemas_i, 120, 1).
+disciplina(resolucao_de_problemas_iii, 120, 3).
+disciplina(algoritmos_e_programacao_es, 120, 1).
+disciplina(arquitetura_e_organizacao_de_computadores_es, 30, 3).
+disciplina(estruturas_de_dados_es, 60, 3).
+disciplina(linguagens_formais_es, 60, 3).
+disciplina(logica_matematica_es, 60, 1).
+disciplina(matematica_discreta_es, 60, 1).
 
 /*Preferência 1*/
 
