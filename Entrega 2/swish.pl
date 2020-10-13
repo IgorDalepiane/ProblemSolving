@@ -1,4 +1,10 @@
+:- use_module(library(lists)).
+:- use_rendering(table,
+		 [header(h('Dia', 'Hora', 'Disciplina', 'Professor', 'Sem'))]).
+
 /*Definição dos fatos*/
+:- dynamic % permite a criaçao de fatos dinamicos
+    alocado/6.
 
 /*Declaração dos professores*/
 
@@ -25,21 +31,20 @@ professor(professor20).
 professor(professor21).
 professor(professor22).
 
-/*Declaração das disciplinas, carga horária e semestre*/
+/*Declaração das disciplinas, c.h. semestral, minutos de aula/semana e semestre*/
 
-disciplina(inovacao_e_criatividade, 30, 3).
-disciplina(analise_e_projeto_de_software, 60, 3).
-disciplina(resolucao_de_problemas_i, 120, 1).
-disciplina(resolucao_de_problemas_iii, 120, 3).
-disciplina(algoritmos_e_programacao_es, 120, 1).
-disciplina(arquitetura_e_organizacao_de_computadores_es, 30, 3).
-disciplina(estruturas_de_dados_es, 60, 3).
-disciplina(linguagens_formais_es, 60, 3).
-disciplina(logica_matematica_es, 60, 1).
-disciplina(matematica_discreta_es, 60, 1).
+disciplina(inovacao_e_criatividade, 30, 90, 3).
+disciplina(analise_e_projeto_de_software, 60, 180, 3).
+disciplina(resolucao_de_problemas_i, 60, 180, 1). % 60h a distancia
+disciplina(resolucao_de_problemas_iii, 60, 180, 3). % 60h a distancia
+disciplina(algoritmos_e_programacao_es, 120, 360, 1).
+disciplina(arquitetura_e_organizacao_de_computadores_es, 30, 90, 3).
+disciplina(estruturas_de_dados_es, 60, 180, 3).
+disciplina(linguagens_formais_es, 60, 180, 3).
+disciplina(logica_matematica_es, 60, 180, 1).
+disciplina(matematica_discreta_es, 60, 180, 1).
 
 /*Preferência 1*/
-
 preferencia(professor1, matematica_discreta_es, 1).
 
 preferencia(professor2, arquitetura_e_organizacao_de_computadores_es, 1).
@@ -347,15 +352,73 @@ preferencia(professor22, linguagens_formais_es, 5).
 preferencia(professor22, logica_matematica_es, 5).
 preferencia(professor22, matematica_discreta_es, 5).
 
-/*Declaração dos dias da semana e horários*/
-dia(segunda).
-dia(terca).
-dia(quarta).
-dia(quinta).
-dia(sexta).
-dia(sab).
+/*Declaração dos dias da semana e hora*/
+horario(segunda, 18:30).
+horario(segunda, 19:15).
+horario(segunda, 20:30).
+horario(segunda, 21:15).
 
-hora(1830).
-hora(1915).
-hora(2030).
-hora(2115).
+horario(terca, 18:30).
+horario(terca, 19:15).
+horario(terca, 20:30).
+horario(terca, 21:15).
+
+horario(quarta, 18:30).
+horario(quarta, 19:15).
+horario(quarta, 20:30).
+horario(quarta, 21:15).
+
+horario(quinta, 18:30).
+horario(quinta, 19:15).
+horario(quinta, 20:30).
+horario(quinta, 21:15).
+
+horario(sexta, 18:30).
+horario(sexta, 19:15).
+horario(sexta, 20:30).
+horario(sexta, 21:15).
+
+horario(sabado, 18:30).
+horario(sabado, 19:15).
+horario(sabado, 20:30).
+horario(sabado, 21:15).
+
+iniciar :-
+    format('~+~+~+~w~n~n~w', ['### Horários dos semestres ###', 'Para executar o programa invoque a regra alocar(Dia, Hr, Disc, Prof). ']). % formata texto mostra usuario
+
+excedeuCargaDisc(Disc) :- 
+    findall(X, alocado(_, _, Disc, _, X, _), Ls), % encontra qnts vezes a disciplina foi alocada salvando os minutos em uma lista
+    disciplina(Disc, _, MinutosAulaSemana, _), % verifica o tempo maximo q pode ser alocado
+    sum_list(Ls, Total), % soma as ocorrencias
+  	not(Total < MinutosAulaSemana). % verifica se esta no limite de alocações
+
+excedeuCargaProf(Prof, S) :- 
+    findall(X, alocado(_, _, _, Prof, X, S), Ls), % verifica qnts vezes o prof foi alocado salvando os minutos em uma lista
+    sum_list(Ls, Total), % soma das ocorrencias
+  	not(Total < 720). % 12*60 (horario total q um prof pode dar aula/semana)
+
+list_alocados(Ls) :- % organiza a visualização por semestre, mostrando o primeiro primeiro
+    findall(h(Dia,Hora,Disc,Prof, 1), alocado(Dia, Hora, Disc, Prof, _, 1), Ls1), 
+	  findall(h(Dia,Hora,Disc,Prof, 3), alocado(Dia, Hora, Disc, Prof, _, 3), Ls2),
+    append(Ls1, Ls2, Ls). % junta as duas listas
+
+alocar :-
+    preferencia(Prof, Disc, Pref),
+    Pref =< 1,
+    horario(Dia, Hora), % só aceita horarios definidos nos fatos
+    disciplina(Disc,_,_,S), % encontra o semestre baseado na Disciplina
+    not(alocado(Dia, Hora, _, _, _, S)), % verifica se ja nao esta alocado
+    not(excedeuCargaDisc(Disc)), % verifica se a disciplina ainda pode ser alocada
+    not(excedeuCargaProf(Prof, S)), % verifica se a carga horaria semanal do prof excedeu
+    assertz(alocado(Dia, Hora, Disc, Prof, 45, S)). % cria um novo fato
+
+/** <examples> 
+?- preferencia(X, Y, 1).
+?- alocar(Dia, Hor, X, Y).
+?- alocar(segunda, 1830, X, professor1),
+   alocar(segunda, 1915, X, professor1),
+   alocar(segunda, 2030, X, professor1),
+   excedeuCargaDisc(X).
+?- alocar(Dia, Hr, Disc, Prof, Sem),
+   list_alocados(Ls).
+*/
