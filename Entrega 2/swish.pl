@@ -1,10 +1,10 @@
 :- use_module(library(lists)).
 :- use_rendering(table,
-		 [header(h('Dia', 'Hora', 'Disciplina', 'Professor', 'Sem'))]).
+		 [header(h('Dia', 'Hora', 'Disciplina', 'Professor', 'Sem', 'Pref'))]).
 
 /*Definição dos fatos*/
 :- dynamic % permite a criaçao de fatos dinamicos
-    alocado/6.
+    alocado/7.
 
 /*Declaração dos professores*/
 
@@ -384,20 +384,20 @@ horario(sabado, 20:30).
 horario(sabado, 21:15).
 
 excedeuCargaDisc(Disc) :- 
-    findall(X, alocado(_, _, Disc, _, X, _), Ls), % encontra qnts vezes a disciplina foi alocada salvando os minutos em uma lista
+    findall(X, alocado(_, _, Disc, _, X, _, _), Ls), % encontra qnts vezes a disciplina foi alocada salvando os minutos em uma lista
     disciplina(Disc, _, MinutosAulaSemana, _), % verifica o tempo maximo q pode ser alocado
     sum_list(Ls, Total), % soma as ocorrencias
   	not(Total < MinutosAulaSemana). % verifica se esta no limite de alocações
 
 
 excedeuCargaProf(Prof, S) :- 
-    findall(X, alocado(_, _, _, Prof, X, S), Ls), % verifica qnts vezes o prof foi alocado salvando os minutos em uma lista
+    findall(X, alocado(_, _, _, Prof, X, S,_), Ls), % verifica qnts vezes o prof foi alocado salvando os minutos em uma lista
     sum_list(Ls, Total), % soma das ocorrencias
   	not(Total < 720). % 12*60 (horario total q um prof pode dar aula/semana)
 
 list_alocados(Ls) :- % organiza a visualização por semestre, mostrando o primeiro primeiro
-    findall(h(Dia,Hora,Disc,Prof, 1), alocado(Dia, Hora, Disc, Prof, _, 1), Ls1), 
-	  findall(h(Dia,Hora,Disc,Prof, 3), alocado(Dia, Hora, Disc, Prof, _, 3), Ls2),
+    findall(h(Dia,Hora,Disc,Prof, 1, Pref), alocado(Dia, Hora, Disc, Prof, _, 1, Pref), Ls1), 
+	  findall(h(Dia,Hora,Disc,Prof, 3, Pref), alocado(Dia, Hora, Disc, Prof, _, 3, Pref), Ls2),
     append(Ls1, Ls2, Ls). % junta as duas listas
 
 alocar :-
@@ -405,10 +405,10 @@ alocar :-
     Pref =< 1,
     horario(Dia, Hora), % só aceita horarios definidos nos fatos
     disciplina(Disc,_,_,S), % encontra o semestre baseado na Disciplina
-    not(alocado(Dia, Hora, _, _, _, S)), % verifica se ja nao esta alocado
+    not(alocado(Dia, Hora, _, _, _, S, _)), % verifica se ja nao esta alocado
     not(excedeuCargaDisc(Disc)), % verifica se a disciplina ainda pode ser alocada
     not(excedeuCargaProf(Prof, S)), % verifica se a carga horaria semanal do prof excedeu
-    assertz(alocado(Dia, Hora, Disc, Prof, 45, S)). % cria um novo fato
+    assertz(alocado(Dia, Hora, Disc, Prof, 45, S, Pref)). % cria um novo fato
 
 main :-
     repeat,
