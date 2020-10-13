@@ -383,14 +383,12 @@ horario(sabado, 19:15).
 horario(sabado, 20:30).
 horario(sabado, 21:15).
 
-iniciar :-
-    format('~+~+~+~w~n~n~w', ['### Horários dos semestres ###', 'Para executar o programa invoque a regra alocar(Dia, Hr, Disc, Prof). ']). % formata texto mostra usuario
-
 excedeuCargaDisc(Disc) :- 
     findall(X, alocado(_, _, Disc, _, X, _), Ls), % encontra qnts vezes a disciplina foi alocada salvando os minutos em uma lista
     disciplina(Disc, _, MinutosAulaSemana, _), % verifica o tempo maximo q pode ser alocado
     sum_list(Ls, Total), % soma as ocorrencias
   	not(Total < MinutosAulaSemana). % verifica se esta no limite de alocações
+
 
 excedeuCargaProf(Prof, S) :- 
     findall(X, alocado(_, _, _, Prof, X, S), Ls), % verifica qnts vezes o prof foi alocado salvando os minutos em uma lista
@@ -414,7 +412,7 @@ alocar :-
 
 main :-
     repeat,
-    write('-------MENU-------'), nl,
+    write('------- MANUAL -------'), nl,
     write('1. Gerar horários para o ano letivo'), nl,
     write('2. Gerar horário para o primeiro semestre'), nl,
     write('3. Gerar horário para o terceiro semestre'), nl,
@@ -426,15 +424,26 @@ main :-
     action_for(Z),
     fail.
 
+
 action_for(X) :-
 	X == 1 -> 
-    	write('Action for '),
-    	write(X), nl;
+    	write('------- Gerar horários -------'), nl,
+		write('Copie, cole e execute a seguinte linha: '),nl, nl,
+    	write('alocar, list_alocados(Ls)'), nl, nl;
+    X == 2 -> 
+    	write('------- Gerar horários 1º Semestre -------'), nl,
+		write('Copie, cole e execute a seguinte linha: '),nl, nl,
+    	write('EM PRODUÇÃO'),nl, nl;
+    X == 3 -> 
+    	write('------- Gerar horários 2º Semestre -------'), nl,
+		write('EM PRODUÇÃO'),nl, nl;
     X == 4 -> 
-      write('Disciplina :'),
-      read(D),
-      not(excedeuCargaDisc(D));
+    	write('------- Verificar disciplina -------'), nl,
+		write('Copie, cole e execute a seguinte linha: '),nl, nl,
+    	write('excedeuCargaDisc(X)'), nl, nl;
     write('Ola '), nl.
+
+
 
 /** <examples> 
 ?- preferencia(X, Y, 1).
