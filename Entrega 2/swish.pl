@@ -412,6 +412,30 @@ alocar :-
     not(excedeuCargaProf(Prof, S)), % verifica se a carga horaria semanal do prof excedeu
     assertz(alocado(Dia, Hora, Disc, Prof, 45, S)). % cria um novo fato
 
+main :-
+    repeat,
+    write('-------MENU-------'), nl,
+    write('1. Gerar horários para o ano letivo'), nl,
+    write('2. Gerar horário para o primeiro semestre'), nl,
+    write('3. Gerar horário para o terceiro semestre'), nl,
+    write('4. Verificar se uma disciplina foi excedida'), nl,
+    write('5. Exit'), nl,
+    write('Escolha : '),
+    read(Z),
+    ( Z = 5 -> !, fail ; true ),  % falha quando Z for maior que 5
+    action_for(Z),
+    fail.
+
+action_for(X) :-
+	X == 1 -> 
+    	write('Action for '),
+    	write(X), nl;
+    X == 4 -> 
+      write('Disciplina :'),
+      read(D),
+      not(excedeuCargaDisc(D));
+    write('Ola '), nl.
+
 /** <examples> 
 ?- preferencia(X, Y, 1).
 ?- alocar(Dia, Hor, X, Y).
