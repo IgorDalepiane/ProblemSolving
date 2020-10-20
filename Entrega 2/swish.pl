@@ -395,7 +395,7 @@ excedeuCargaProf(Prof, S) :-
     sum_list(Ls, Total), % soma das ocorrencias
   	not(Total < 720). % 12*60 (horario total q um prof pode dar aula/semana)
 
-list_alocados(Ls) :- % organiza a visualização por semestre e horário, mostrando o primeiro primeiro
+list_alocados(Ls) :- % organiza a visualização por semestre e horário, mostrando todos os semestres
     findall(h(segunda, Hora, Disc,Prof, 1, Pref), alocado(segunda, Hora, Disc, Prof, _, 1, Pref), Ls1Seg),
     findall(h(terca, Hora, Disc, Prof, 1, Pref), alocado(terca, Hora, Disc, Prof, _, 1, Pref), Ls1Ter),
     findall(h(quarta, Hora, Disc, Prof, 1, Pref), alocado(quarta, Hora, Disc, Prof, _, 1, Pref), Ls1Qua),
@@ -419,6 +419,19 @@ list_alocados(Ls) :- % organiza a visualização por semestre e horário, mostra
     append(LsAux8, Ls2Qui, LsAux9),
     append(LsAux9, Ls2Sex, LsAux10),
     append(LsAux10, Ls2Sab, Ls).
+
+list_alocados_1semestre(Ls) :- % organiza a visualização por semestre e horário, mostrando o primeiro semestre apenas
+    findall(h(segunda, Hora, Disc,Prof, 1, Pref), alocado(segunda, Hora, Disc, Prof, _, 1, Pref), Ls1Seg),
+    findall(h(terca, Hora, Disc, Prof, 1, Pref), alocado(terca, Hora, Disc, Prof, _, 1, Pref), Ls1Ter),
+    findall(h(quarta, Hora, Disc, Prof, 1, Pref), alocado(quarta, Hora, Disc, Prof, _, 1, Pref), Ls1Qua),
+    findall(h(quinta, Hora, Disc, Prof, 1, Pref), alocado(quinta, Hora, Disc, Prof, _, 1, Pref), Ls1Qui),
+    findall(h(sexta, Hora, Disc, Prof, 1, Pref), alocado(sexta, Hora, Disc, Prof, _, 1, Pref), Ls1Sex),
+    findall(h(sabado, Hora, Disc, Prof, 1, Pref), alocado(sabado, Hora, Disc, Prof, _, 1, Pref), Ls1Sab),
+    append(Ls1Seg, Ls1Ter, LsAux1),
+    append(LsAux1, Ls1Qua, LsAux2),
+    append(LsAux2, Ls1Qui, LsAux3),
+    append(LsAux3, Ls1Sex, LsAux4),
+    append(LsAux4, Ls1Sab, Ls).
 
 alocar :-
     preferencia(Prof, Disc, Pref),
