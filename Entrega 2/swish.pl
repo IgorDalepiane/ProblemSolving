@@ -433,6 +433,19 @@ list_alocados_1semestre(Ls) :- % organiza a visualização por semestre e horár
     append(LsAux3, Ls1Sex, LsAux4),
     append(LsAux4, Ls1Sab, Ls).
 
+list_alocados_3semestre(Ls) :- % organiza a visualização por semestre e horário, mostrando o terceiro semestre apenas
+    findall(h(segunda, Hora, Disc, Prof, 3, Pref), alocado(segunda, Hora, Disc, Prof, _, 3, Pref), Ls2Seg),
+    findall(h(terca, Hora,Disc, Prof, 3, Pref), alocado(terca, Hora, Disc, Prof, _, 3, Pref), Ls2Ter),
+    findall(h(quarta, Hora, Disc, Prof, 3, Pref), alocado(quarta, Hora, Disc, Prof, _, 3, Pref), Ls2Qua),
+    findall(h(quinta, Hora, Disc, Prof, 3, Pref), alocado(quinta, Hora, Disc, Prof, _, 3, Pref), Ls2Qui),
+    findall(h(sexta, Hora,Disc, Prof, 3, Pref), alocado(sexta, Hora, Disc, Prof, _, 3, Pref), Ls2Sex),
+    findall(h(sabado, Hora, Disc, Prof, 3, Pref), alocado(sabado, Hora, Disc, Prof, _, 3, Pref), Ls2Sab),
+	append(Ls2Seg, Ls2Ter, LsAux5),
+    append(LsAux5, Ls2Qua, LsAux6),
+    append(LsAux6, Ls2Qui, LsAux7),
+    append(LsAux7, Ls2Sex, LsAux8),
+    append(LsAux8, Ls2Sab, Ls).
+
 alocar :-
     preferencia(Prof, Disc, Pref),
     Pref =< 1,
