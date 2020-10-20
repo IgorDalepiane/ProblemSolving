@@ -389,7 +389,6 @@ excedeuCargaDisc(Disc) :-
     sum_list(Ls, Total), % soma as ocorrencias
   	not(Total < MinutosAulaSemana). % verifica se esta no limite de alocações
 
-
 excedeuCargaProf(Prof, S) :- 
     findall(X, alocado(_, _, _, Prof, X, S,_), Ls), % verifica qnts vezes o prof foi alocado salvando os minutos em uma lista
     sum_list(Ls, Total), % soma das ocorrencias
@@ -456,7 +455,7 @@ alocar :-
     not(excedeuCargaProf(Prof, S)), % verifica se a carga horaria semanal do prof excedeu
     assertz(alocado(Dia, Hora, Disc, Prof, 45, S, Pref)). % cria um novo fato
 
-main :-
+iniciar :-
     repeat,
     write('------- MANUAL -------'), nl,
     write('1. Gerar horários para o ano letivo'), nl,
@@ -470,7 +469,6 @@ main :-
     action_for(Z),
     fail.
 
-
 action_for(X) :-
 	X == 1 -> 
     	write('------- Gerar horários -------'), nl,
@@ -479,17 +477,16 @@ action_for(X) :-
     X == 2 -> 
     	write('------- Gerar horários 1º Semestre -------'), nl,
 		write('Copie, cole e execute a seguinte linha: '),nl, nl,
-    	write('EM PRODUÇÃO'),nl, nl;
+    	write('alocar, list_alocados_1semestre(Ls)'),nl, nl;
     X == 3 -> 
-    	write('------- Gerar horários 2º Semestre -------'), nl,
-		write('EM PRODUÇÃO'),nl, nl;
+    	write('------- Gerar horários 3º Semestre -------'), nl,
+		write('Copie, cole e execute a seguinte linha: '),nl, nl,
+    	write('alocar, list_alocados_3semestre(Ls)'),nl, nl;
     X == 4 -> 
     	write('------- Verificar disciplina -------'), nl,
 		write('Copie, cole e execute a seguinte linha: '),nl, nl,
     	write('excedeuCargaDisc(X)'), nl, nl;
     write('Ola '), nl.
-
-
 
 /** <examples> 
 ?- preferencia(X, Y, 1).
