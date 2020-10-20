@@ -355,28 +355,28 @@ preferencia(professor22, matematica_discreta_es, 5).
 /*Declaração dos dias da semana e hora*/
 horario(segunda, 18:30).
 horario(segunda, 19:15).
-horario(segunda, 20:30).
-horario(segunda, 21:15).
+horario(sexta, 18:30).
+horario(sexta, 19:15).
 
 horario(terca, 18:30).
 horario(terca, 19:15).
 horario(terca, 20:30).
 horario(terca, 21:15).
 
-horario(quarta, 18:30).
-horario(quarta, 19:15).
-horario(quarta, 20:30).
-horario(quarta, 21:15).
-
 horario(quinta, 18:30).
 horario(quinta, 19:15).
 horario(quinta, 20:30).
 horario(quinta, 21:15).
 
-horario(sexta, 18:30).
-horario(sexta, 19:15).
+horario(segunda, 20:30).
+horario(segunda, 21:15).
 horario(sexta, 20:30).
 horario(sexta, 21:15).
+
+horario(quarta, 18:30).
+horario(quarta, 19:15).
+horario(quarta, 20:30).
+horario(quarta, 21:15).
 
 horario(sabado, 18:30).
 horario(sabado, 19:15).
@@ -395,10 +395,30 @@ excedeuCargaProf(Prof, S) :-
     sum_list(Ls, Total), % soma das ocorrencias
   	not(Total < 720). % 12*60 (horario total q um prof pode dar aula/semana)
 
-list_alocados(Ls) :- % organiza a visualização por semestre, mostrando o primeiro primeiro
-    findall(h(Dia,Hora,Disc,Prof, 1, Pref), alocado(Dia, Hora, Disc, Prof, _, 1, Pref), Ls1), 
-	  findall(h(Dia,Hora,Disc,Prof, 3, Pref), alocado(Dia, Hora, Disc, Prof, _, 3, Pref), Ls2),
-    append(Ls1, Ls2, Ls). % junta as duas listas
+list_alocados(Ls) :- % organiza a visualização por semestre e horário, mostrando o primeiro primeiro
+    findall(h(segunda, Hora, Disc,Prof, 1, Pref), alocado(segunda, Hora, Disc, Prof, _, 1, Pref), Ls1Seg),
+    findall(h(terca, Hora, Disc, Prof, 1, Pref), alocado(terca, Hora, Disc, Prof, _, 1, Pref), Ls1Ter),
+    findall(h(quarta, Hora, Disc, Prof, 1, Pref), alocado(quarta, Hora, Disc, Prof, _, 1, Pref), Ls1Qua),
+    findall(h(quinta, Hora, Disc, Prof, 1, Pref), alocado(quinta, Hora, Disc, Prof, _, 1, Pref), Ls1Qui),
+    findall(h(sexta, Hora, Disc, Prof, 1, Pref), alocado(sexta, Hora, Disc, Prof, _, 1, Pref), Ls1Sex),
+    findall(h(sabado, Hora, Disc, Prof, 1, Pref), alocado(sabado, Hora, Disc, Prof, _, 1, Pref), Ls1Sab),
+    findall(h(segunda, Hora, Disc, Prof, 3, Pref), alocado(segunda, Hora, Disc, Prof, _, 3, Pref), Ls2Seg),
+    findall(h(terca, Hora,Disc, Prof, 3, Pref), alocado(terca, Hora, Disc, Prof, _, 3, Pref), Ls2Ter),
+    findall(h(quarta, Hora, Disc, Prof, 3, Pref), alocado(quarta, Hora, Disc, Prof, _, 3, Pref), Ls2Qua),
+    findall(h(quinta, Hora, Disc, Prof, 3, Pref), alocado(quinta, Hora, Disc, Prof, _, 3, Pref), Ls2Qui),
+    findall(h(sexta, Hora,Disc, Prof, 3, Pref), alocado(sexta, Hora, Disc, Prof, _, 3, Pref), Ls2Sex),
+    findall(h(sabado, Hora, Disc, Prof, 3, Pref), alocado(sabado, Hora, Disc, Prof, _, 3, Pref), Ls2Sab),
+    append(Ls1Seg, Ls1Ter, LsAux1),
+    append(LsAux1, Ls1Qua, LsAux2),
+    append(LsAux2, Ls1Qui, LsAux3),
+    append(LsAux3, Ls1Sex, LsAux4),
+    append(LsAux4, Ls1Sab, LsAux5),
+    append(LsAux5, Ls2Seg, LsAux6),
+    append(LsAux6, Ls2Ter, LsAux7),
+    append(LsAux7, Ls2Qua, LsAux8),
+    append(LsAux8, Ls2Qui, LsAux9),
+    append(LsAux9, Ls2Sex, LsAux10),
+    append(LsAux10, Ls2Sab, Ls).
 
 alocar :-
     preferencia(Prof, Disc, Pref),
