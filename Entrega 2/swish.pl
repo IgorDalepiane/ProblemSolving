@@ -489,12 +489,6 @@ action_for(X) :-
     write('Ola '), nl.
 
 /** <examples> 
-?- preferencia(X, Y, 1).
-?- alocar(Dia, Hor, X, Y).
-?- alocar(segunda, 1830, X, professor1),
-   alocar(segunda, 1915, X, professor1),
-   alocar(segunda, 2030, X, professor1),
-   excedeuCargaDisc(X).
-?- alocar(Dia, Hr, Disc, Prof, Sem),
+?- alocar,
    list_alocados(Ls).
 */
