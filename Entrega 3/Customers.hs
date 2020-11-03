@@ -23,14 +23,25 @@ menuCustomers = do
     putStrLn "0 - voltar" 
     putStrLn "Opcao: "
     option <- getLine
-    if (read option) == 0 then menu else do selectedOptionClient (read option)
+    if (read option) == 0 then menu else do selectedOptionCustumer (read option)
 
-selectedOptionClient :: Int -> IO()
-selectedOptionClient opcao | opcao == 1 = do {readFromJSON; menuCustomers} 
+selectedOptionCustumer :: Int -> IO()
+selectedOptionCustumer opcao | opcao == 1 = do {registerCustumer; menuCustomers} 
                      | opcao == 2 = do {readFromJSON; menuCustomers}
                      | opcao == 3 = do {readFromJSON; menuCustomers}
                      | opcao == 4 = do {readFromJSON; menuCustomers}
                      | otherwise =  do {readFromJSON; menuCustomers}
+
+registerCustumer :: IO ()
+registerCustumer = do 
+    putStrLn "Para cadastrar um novo cliente preencha as informacoes abaixo:"
+    putStrLn "Nome: "
+    nameGet <- getLine
+    putStrLn "Numero da CNH: "
+    idCNHGet <- getLine
+    putStrLn "Id no Sistema: "
+    customerIdGet <- getLine
+    do writeToJSON (Customer {customerId = customerIdGet, name = nameGet, idCNH = idCNHGet, programPoints = 0})
 
 writeToJSON :: [Customer] -> IO ()
 writeToJSON list = do
