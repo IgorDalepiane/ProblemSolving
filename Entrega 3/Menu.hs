@@ -1,7 +1,6 @@
-main :: IO ()
-main = do
-    logo
-    menu
+module Menu where
+
+import Vehicles (menuVehicles)
 
 menu :: IO ()
 menu = do
@@ -16,7 +15,7 @@ menu = do
 
 
 selectedOption :: Int -> IO()
-selectedOption opcao | opcao == 1 = do {logoVehicles; putStrLn "Opcao em Desenvolvimento"; menu} 
+selectedOption opcao | opcao == 1 = do {logoVehicles; menuVehicles; menu} 
                      | opcao == 2 = do {logoClient; menuClient; menu}
                      | opcao == 3 = do {logoReport; putStrLn "Opcao em Desenvolvimento"; menu}
                      | opcao == 4 = do {logoBudget; putStrLn "Opcao em Desenvolvimento"; menu}
