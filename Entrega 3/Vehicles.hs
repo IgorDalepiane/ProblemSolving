@@ -1,12 +1,21 @@
 {-# LANGUAGE Arrows, NoMonomorphismRestriction #-}
+{-# LANGUAGE DeriveGeneric #-}
+
 module Vehicles where
 
-import Text.XML.HXT.Core
+import Data.Aeson
+import GHC.Generics
+import qualified Data.ByteString.Lazy as B
 
 data Vehicle = Vehicle {
   placa, category :: String,
   indice, kms :: Int
-} deriving (Show, Eq)
+} deriving (Generic, Show)
+
+instance ToJSON Vehicle where
+    toEncoding = genericToEncoding defaultOptions
+
+instance FromJSON Vehicle
 
 menuVehicles :: IO()
 menuVehicles = do
@@ -20,25 +29,22 @@ menuVehicles = do
   if (read option) == 0 then putStrLn("Retornando...\n") else do selectedOption (read option)
 
 selectedOption :: Int -> IO()
-selectedOption option | option == 1 = do {listarVehicles; menuVehicles}
+selectedOption option | option == 1 = do {readFromJSON; menuVehicles}
+                      | option == 2 = do {readFromJSON ; menuVehicles}
+                      | option == 3 = do {readFromJSON ; menuVehicles}
+                      | option == 4 = do {readFromJSON ; menuVehicles}
 
-parseXML file = readDocument[withValidate no, withRemoveWS yes] file
 
-atTag tag = deep (isElem >>> hasName tag)
+writeToJSON :: [Vehicle] -> IO ()
+writeToJSON list = do
+  B.writeFile "db/vehicles.json" (encode list)
 
-getVehiclesFromXml = atTag "CATEGORY" >>>
-  proc cat -> do
-    _category     <- getAttrValue "NAME"   -< cat
-    _ve           <- atTag "VEHICLE"       -< cat
-    _indice       <- getAttrValue "INDICE" -< _ve
-    _placa        <- getAttrValue "PLACA"  -< _ve
-    _kms          <- getAttrValue "KM"     -< _ve
-    returnA -< Vehicle {
-      indice    = read _indice  :: Int,
-      placa     = _placa, 
-      kms       = read _kms     :: Int, 
-      category  = _category
-    }
+readFromJSON :: IO()
+readFromJSON = do
+  d <- (eitherDecode <$> B.readFile "db/vehicles.json") :: IO (Either String [Vehicle])
+  case d of
+    Left err -> putStrLn err
+    Right ps -> printVehicles ps
 
 printVehicles :: [Vehicle] -> IO ()
 printVehicles vehicles = putStrLn ("\n\n\n" ++ (listVehicle vehicles) ++ "\n\n")
@@ -50,7 +56,4 @@ listVehicle (x:xs) = toStringVehicle x ++ ['\n'] ++ listVehicle xs
 toStringVehicle :: Vehicle -> String
 toStringVehicle (Vehicle {indice = i, placa = p, kms = k, category = cat}) = show i ++ " - " ++ p ++ " - " ++ cat ++ " - " ++ show k ++ "km"
 
-listarVehicles :: IO()
-listarVehicles = do
-  _vehicles <- runX (parseXML "db/Vehicles.xml" >>> getVehiclesFromXml)
-  printVehicles _vehicles
+
