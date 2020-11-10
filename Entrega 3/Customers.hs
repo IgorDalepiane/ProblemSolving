@@ -34,7 +34,7 @@ selectedOptionCustomer :: Int -> IO ()
 selectedOptionCustomer opcao
   | opcao == 1 = do addCustomer; menuCustomers
   | opcao == 2 = do readFromJSON; menuCustomers
-  | opcao == 3 = do readFromJSON; menuCustomers
+  | opcao == 3 = do removeCustomer; menuCustomers
   | opcao == 4 = do lista <- readFromJSON; printCustomers lista; menuCustomers
   | otherwise = do readFromJSON; menuCustomers
 
@@ -63,6 +63,24 @@ generateIndex x = do
 addToList :: [Customer] -> Customer -> [Customer]
 addToList [] x = [x]
 addToList x ve = x ++ [ve]
+
+-- Remove Customer
+
+removeItem :: Int -> [Customer] -> [Customer]
+removeItem _ [] = []
+removeItem x (y : ys)
+  | x == (customerId) y = removeItem x ys
+  | otherwise = y : removeItem x ys
+
+removeCustomer :: IO ()
+removeCustomer = do
+  putStrLn "\n\nRemocao de cliente"
+  putStrLn "\nIdentificador do cliente: "
+  customerIdToDelete <- getLine
+  lista <- readFromJSON
+  let listaAtualizada = removeItem (read customerIdToDelete :: Int) lista
+  writeToJSON listaAtualizada
+  putStrLn $ "\nO cliente com o identificador " ++ customerIdToDelete ++ " foi removido com sucesso! \n"
 
 -- List customers
 
