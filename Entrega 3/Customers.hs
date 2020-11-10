@@ -1,8 +1,12 @@
+{-# LANGUAGE Arrows, NoMonomorphismRestriction #-}
+{-# LANGUAGE DeriveGeneric #-}
+module Customers where
+
 import Data.Aeson
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 
-data Customers = Customers {
+data Customer = Customer {
     customerId :: Integer,
     name :: String,
     idCNH :: String,
@@ -23,7 +27,7 @@ menuCustomers = do
     putStrLn "0 - voltar" 
     putStrLn "Opcao: "
     option <- getLine
-    if (read option) == 0 then menu else do selectedOptionCustumer (read option)
+    if (read option) == 0 then putStrLn("Retornando...") else do selectedOptionCustumer (read option)
 
 selectedOptionCustumer :: Int -> IO()
 selectedOptionCustumer opcao | opcao == 1 = do {registerCustumer; menuCustomers} 
@@ -39,9 +43,8 @@ registerCustumer = do
     nameGet <- getLine
     putStrLn "Numero da CNH: "
     idCNHGet <- getLine
-    putStrLn "Id no Sistema: "
-    customerIdGet <- getLine
-    do writeToJSON (Customer {customerId = customerIdGet, name = nameGet, idCNH = idCNHGet, programPoints = 0})
+    -- mudar o id do cliente
+    do writeToJSON [(Customer {customerId = 0, name = nameGet, idCNH = idCNHGet, programPoints = 0})]
 
 writeToJSON :: [Customer] -> IO ()
 writeToJSON list = do
@@ -49,7 +52,7 @@ writeToJSON list = do
 
 readFromJSON :: IO()
 readFromJSON = do
-  d <- (eitherDecode <$> B.readFile "db/customers.json") :: IO (Either String [Vehicle])
+  d <- (eitherDecode <$> B.readFile "db/customers.json") :: IO (Either String [Customer])
   case d of
     Left err -> putStrLn err
     Right ps -> printCustomers ps
@@ -62,6 +65,6 @@ listCustomer [] = ""
 listCustomer (x:xs) = toStringCustomer x ++ ['\n'] ++ listCustomer xs
 
 toStringCustomer :: Customer -> String
-toStringCustomer (Vehicle {customerId = i, idCNH = p, name = k, programPoints = cat}) = show i ++ " - " ++ p ++ " - " ++ cat ++ " - " ++ show k ++ "pts"
+toStringCustomer (Customer {customerId = i, idCNH = cnh, name = n, programPoints = pp}) = show i ++ " - " ++ cnh ++ " - " ++ n ++ " - " ++ show pp ++ "pts"
 
 

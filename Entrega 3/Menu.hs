@@ -1,7 +1,7 @@
 module Menu where
 
 import Vehicles (menuVehicles)
-import Clients (menuClient)
+import Customers (menuCustomers)
 
 menu :: IO ()
 menu = do
@@ -17,7 +17,7 @@ menu = do
 
 selectedOption :: Int -> IO()
 selectedOption opcao | opcao == 1 = do {logoVehicles; menuVehicles; menu} 
-                     | opcao == 2 = do {logoClient; menuClient; menu}
+                     | opcao == 2 = do {logoClient; menuCustomers; menu}
                      | opcao == 3 = do {logoReport; putStrLn "Opcao em Desenvolvimento"; menu}
                      | opcao == 4 = do {logoBudget; putStrLn "Opcao em Desenvolvimento"; menu}
                      | otherwise =  do {putStrLn "Esta opcao nao e valida. Por favor selecione uma opcao listada acima"; logo;menu}

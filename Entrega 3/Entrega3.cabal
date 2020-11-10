@@ -20,7 +20,7 @@ executable Entrega3
   main-is:             Main.hs
   other-modules:
     Vehicles,
-    Clients,
+    Customers,
     Menu
   -- other-extensions:
   build-depends:
