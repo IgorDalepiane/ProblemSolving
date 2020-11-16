@@ -11,6 +11,7 @@ import Data.Aeson
       ToJSON(toEncoding) )
 import GHC.Generics ( Generic )
 import qualified Data.ByteString.Lazy as B
+import Data.List (sortOn)
 
 data Vehicle = Vehicle {
   vehicleId, kms, year :: Int,
@@ -62,6 +63,10 @@ optionUpdateVehicle = do
   vehicleIdEdit <- getLine
   lista <- readFromJSON
   let veicReturn = returnItem (read vehicleIdEdit :: Int) lista
+
+  putStrLn "Editando veículo: "
+  putStrLn $ listVehicle [veicReturn]
+
   let listaAtualizada = removeItem (read vehicleIdEdit :: Int) lista
   putStrLn "Nova placa: "
   _plate <- getLine
@@ -81,7 +86,15 @@ optionUpdateVehicle = do
   let ve = Vehicle {vehicleId = vehicleId veicReturn, plate = _plate, kms = read _kms :: Int, category = _category, model=_model, brand = _brand, color = _color, year = read _year :: Int}
   let list = addToList listaAtualizada ve
   
-  writeToJSON list
+  writeToJSON $ sortById list
+
+  putStrLn "\nO veiculo antigo: "
+  putStrLn $ listVehicle [veicReturn]
+  putStrLn "foi editado para: "
+  putStrLn $ listVehicle [ve]
+
+sortById :: [Vehicle] -> [Vehicle]
+sortById = sortOn vehicleId
 
 returnItem :: Int -> [Vehicle] -> Vehicle
 returnItem _ [] = error "Lista vazia!"
