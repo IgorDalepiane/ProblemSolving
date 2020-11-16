@@ -9,7 +9,7 @@ import qualified Data.ByteString.Lazy as B
 
 data Customer = Customer { 
     customerId :: Int,
-    name :: String,
+    customerName :: String,
     idCNH :: String,
     programPoints :: Int
 } deriving (Generic, Show)
@@ -28,12 +28,12 @@ menuCustomers = do
   putStrLn "0 - voltar"
   putStrLn "Opcao: "
   option <- getLine
-  if (read option) == 0 then putStrLn ("Retornando...") else do selectedOptionCustomer (read option)
+  if read option == 0 then putStrLn "Retornando..." else do selectedOptionCustomer (read option)
 
 selectedOptionCustomer :: Int -> IO ()
 selectedOptionCustomer opcao
   | opcao == 1 = do addCustomer; menuCustomers
-  | opcao == 2 = do readFromJSON; menuCustomers
+  | opcao == 2 = do editCustumer; menuCustomers
   | opcao == 3 = do removeCustomer; menuCustomers
   | opcao == 4 = do lista <- readFromJSON; printCustomers lista; menuCustomers
   | otherwise = do readFromJSON; menuCustomers
@@ -49,7 +49,7 @@ addCustomer = do
   idCNHGet <- getLine
 
   lista <- readFromJSON
-  let newCustomer = Customer {customerId = generateIndex lista, name = nameGet, idCNH = idCNHGet, programPoints = 0}
+  let newCustomer = Customer {customerId = listlength lista, customerName = nameGet, idCNH = idCNHGet, programPoints = 0}
   let list = addToList lista newCustomer
   writeToJSON list
   putStrLn $ "\nO cliente " ++ nameGet ++ " foi adicionado com sucesso! \n"
@@ -58,7 +58,11 @@ generateIndex :: [Customer] -> Int
 generateIndex [] = 0
 generateIndex x = do
   let lastCustomer = last x
-  (customerId) lastCustomer + 1
+  customerId lastCustomer + 1
+
+listlength :: [Customer] -> Int
+listlength [] = 0
+listlength (_:xs) = 1 + listlength xs
 
 addToList :: [Customer] -> Customer -> [Customer]
 addToList [] x = [x]
@@ -66,10 +70,35 @@ addToList x ve = x ++ [ve]
 
 -- Remove Customer
 
+editCustumer :: IO ()
+editCustumer = do
+  putStrLn "\n\nEditar um cliente"
+  putStrLn "\nIdentificador do Cliente: "
+  customerIdToEdit <- getLine
+  lista <- readFromJSON
+  let returnedCustomer = returnItem (read customerIdToEdit :: Int) lista
+  let listaAtualizada = removeItem (read customerIdToEdit :: Int) lista
+  writeToJSON listaAtualizada
+  putStrLn "\nNovo Nome: "
+  nameGet <- getLine
+  putStrLn "\nNovo Numero da CNH: "
+  idCNHGet <- getLine
+  lista <- readFromJSON
+  let newCustomer = Customer {customerId = customerId returnedCustomer, customerName = nameGet, idCNH = idCNHGet, programPoints = programPoints returnedCustomer}
+  let list = addToList lista newCustomer
+  writeToJSON list
+  putStrLn $ "\nO cliente " ++ nameGet ++ " foi editado com sucesso! \n"
+
+returnItem :: Int -> [Customer] -> Customer
+returnItem _ [] = error "Empty List!"
+returnItem y (x:xs)  | y <= 0 = x
+                 | otherwise = returnItem (y-1) xs
+-- Remove Customer
+
 removeItem :: Int -> [Customer] -> [Customer]
 removeItem _ [] = []
 removeItem x (y : ys)
-  | x == (customerId) y = removeItem x ys
+  | x == customerId y = removeItem x ys
   | otherwise = y : removeItem x ys
 
 removeCustomer :: IO ()
@@ -85,7 +114,7 @@ removeCustomer = do
 -- List customers
 
 printCustomers :: [Customer] -> IO ()
-printCustomers customers = putStrLn ("\n\nId - CNH - Nome do cliente - Pontos de fidelidade\n\n" ++ (listCustomer customers) ++ "\n")
+printCustomers customers = putStrLn ("\n\nId - CNH - Nome do cliente - Pontos de fidelidade\n\n" ++ listCustomer customers ++ "\n")
 
 listCustomer :: [Customer] -> String
 listCustomer [] = ""
@@ -108,4 +137,4 @@ readFromJSON = do
     Just customers -> return customers
 
 toStringCustomer :: Customer -> String
-toStringCustomer (Customer {customerId = i, idCNH = cnh, name = n, programPoints = pp}) = show i ++ " - " ++ cnh ++ " - " ++ n ++ " - " ++ show pp ++ "pts"
+toStringCustomer Customer {customerId = i, idCNH = cnh, customerName = n, programPoints = pp} = show i ++ " - " ++ cnh ++ " - " ++ n ++ " - " ++ show pp ++ "pts"
