@@ -2,24 +2,27 @@ module Menu where
 
 import Vehicles (menuVehicles)
 import Customers (menuCustomers)
+import Rents (menuRents)
 
 menu :: IO ()
 menu = do
     putStrLn "1 - Gerenciar Veiculos"
     putStrLn "2 - Gerenciar Clientes"
-    putStrLn "3 - Gerar Relatorio"
-    putStrLn "4 - Gerar Orcamento"
+    putStrLn "3 - Gerenciar Locacoes"
+    putStrLn "4 - Gerar Relatorio"
+    putStrLn "5 - Gerar Orcamento"
     putStrLn "0 - Sair" 
     putStrLn "Opcao: "
     option <- getLine
-    if (read option) == 0 then putStrLn("Obrigado por utilizar nosso sistema!") else do selectedOption (read option)
+    if read option == 0 then putStrLn "Obrigado por utilizar nosso sistema!" else do selectedOption (read option)
 
 
 selectedOption :: Int -> IO()
 selectedOption opcao | opcao == 1 = do {logoVehicles; menuVehicles; menu} 
                      | opcao == 2 = do {logoClient; menuCustomers; menu}
-                     | opcao == 3 = do {logoReport; putStrLn "Opcao em Desenvolvimento"; menu}
-                     | opcao == 4 = do {logoBudget; putStrLn "Opcao em Desenvolvimento"; menu}
+                     | opcao == 3 = do {logoRents; menuRents; menu}
+                     | opcao == 4 = do {logoReport; putStrLn "Opcao em Desenvolvimento"; menu}
+                     | opcao == 5 = do {logoBudget; putStrLn "Opcao em Desenvolvimento"; menu}
                      | otherwise =  do {putStrLn "Esta opcao nao e valida. Por favor selecione uma opcao listada acima"; logo;menu}
 
 
@@ -56,3 +59,9 @@ logoBudget = do
     putStrLn " +-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+"
     putStrLn " |G|e|r|a|r| |O|r|c|a|m|e|n|t|o|"
     putStrLn " +-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+"
+
+logoRents :: IO ()
+logoRents = do
+    putStrLn " +-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+"
+    putStrLn " |G|e|r|e|n|c|i|a|r| |L|o|c|a|c|o|e|s|"
+    putStrLn " +-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+"

@@ -21,6 +21,7 @@ executable Entrega3
   other-modules:
     Vehicles,
     Customers,
+    Rents,
     Menu
   -- other-extensions:
   build-depends:
