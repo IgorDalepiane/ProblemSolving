@@ -4,6 +4,7 @@
 module Rents where
 
 import Customers
+import Vehicles
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
 import GHC.Generics
@@ -11,7 +12,9 @@ import GHC.Generics
 data Rents = Rents
   { rentId :: Int,
     customerRent :: Customer,
-    returned :: Bool -- Aqui e o campo pra saber se foi devolvido ou nao
+    vehicle :: Vehicle,
+    rentDate, returnDate :: String,
+    returned :: Bool
   }
   deriving (Generic, Show)
 
@@ -30,9 +33,47 @@ menuRents = do
 
 selectedOptionRents :: Int -> IO ()
 selectedOptionRents opcao
-  | opcao == 1 = do menuRents
+  | opcao == 1 = do rent
   | opcao == 2 = do devolution
-  | otherwise = do readRentFromJSON; menuRents
+  | otherwise = putStrLn "Opção inválida."
+
+-- rent
+
+-- getAvailableVehicles :: [Vehicle]
+-- getAvailableVehicles = do
+--   vehicles <- read
+
+rent :: IO()
+rent = do
+  putStrLn "\n###Locar veículo###"
+  putStrLn "\nCarros disponíveis: "
+  -- let availableVehicles = 
+  rentIdGet <- getLine
+  putStrLn "\nQuilometragem rodada: "
+  kmGet <- getLine
+  -- read list
+  listRents <- readRentFromJSON
+  -- search rent
+  let returnedRent = returnRent (read rentIdGet :: Int) listRents
+  let listRentsUpdated = removeRent (read rentIdGet :: Int) listRents
+  -- CUSTOMER
+  ---- read customer
+  lista <- readCustomersJSON
+  let customerReturnedRent = customerRent returnedRent
+  let returnedCustomer = returnItem (customerId customerReturnedRent) lista
+  let listaAtualizada = removeItem (customerId customerReturnedRent) lista
+  ---- change points
+  let points = div (read kmGet :: Int)  100
+  let customerRentUpdated = CustomerInstance {customerId = customerId returnedCustomer, customerName = customerName returnedCustomer, idCNH = idCNH returnedCustomer, programPoints = points}
+  ---- add customer to list
+  let listWithNewCustomer = addToList listaAtualizada customerRentUpdated
+  writeCustomerToJSON listWithNewCustomer
+  -- change status
+  let newRent = Rents {rentId = rentId returnedRent, customerRent = customerRentUpdated, returned = True}
+  let listRentsNewStatus = addToRentsList  listRentsUpdated newRent
+  writeRentToJSON listRentsNewStatus
+  let pointsRetunedCustomer = programPoints customerReturnedRent
+  putStrLn $ "\nDevolucao realizada com sucesso, o cliente " ++ customerName customerReturnedRent ++ " esta com "++ show pointsRetunedCustomer ++" pontos no programa de fidelidade\n"
 
 -- devolution
 
@@ -50,16 +91,16 @@ devolution = do
   let listRentsUpdated = removeRent (read rentIdGet :: Int) listRents
   -- CUSTOMER
   ---- read customer
-  lista <- readFromJSON
+  lista <- readCustomersJSON
   let customerReturnedRent = customerRent returnedRent
   let returnedCustomer = returnItem (customerId customerReturnedRent) lista
   let listaAtualizada = removeItem (customerId customerReturnedRent) lista
   ---- change points
   let points = div (read kmGet :: Int)  100
-  let customerRentUpdated = Customer {customerId = customerId returnedCustomer, customerName = customerName returnedCustomer, idCNH = idCNH returnedCustomer, programPoints = points}
+  let customerRentUpdated = CustomerInstance {customerId = customerId returnedCustomer, customerName = customerName returnedCustomer, idCNH = idCNH returnedCustomer, programPoints = points}
   ---- add customer to list
   let listWithNewCustomer = addToList listaAtualizada customerRentUpdated
-  writeToJSON listWithNewCustomer
+  writeCustomerToJSON listWithNewCustomer
   -- change status
   let newRent = Rents {rentId = rentId returnedRent, customerRent = customerRentUpdated, returned = True}
   let listRentsNewStatus = addToRentsList  listRentsUpdated newRent
