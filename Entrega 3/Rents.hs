@@ -23,9 +23,9 @@ instance FromJSON Rent
 
 menuRents :: IO ()
 menuRents = do
-  putStrLn "1 - Cadastrar nova locação"
-  putStrLn "2 - Cadastrar devolução"
-  putStrLn "Opcão: "
+  putStrLn "1 - Cadastrar nova locacao"
+  putStrLn "2 - Cadastrar devolucao"
+  putStrLn "Opcao: "
   option <- getLine
   if read option == 0 then putStrLn "Retornando..." else do selectedOptionRents (read option)
 
@@ -33,7 +33,7 @@ selectedOptionRents :: Int -> IO ()
 selectedOptionRents opcao
   | opcao == 1 = do rent
   | opcao == 2 = do devolution
-  | otherwise = putStrLn "Opção inválida."
+  | otherwise = putStrLn "Opcao invalida."
 
 -- Rent
 
@@ -47,8 +47,8 @@ getAvailableVehicles (x:xs) (y:ys) z
 
 rent :: IO()
 rent = do
-  putStrLn "###Locar veículo###"
-  putStrLn "Carros disponíveis: "
+  putStrLn "###Locar veiculo###"
+  putStrLn "Carros disponiveis: "
 
   vehicles <- readVehiclesFromJSON
   rents <- readRentFromJSON
@@ -57,13 +57,13 @@ rent = do
   let availableVehicles = getAvailableVehicles vehicles rents rents
   printVehicles availableVehicles
 
-  putStrLn "Id do veículo a ser locado: "
+  putStrLn "Id do veiculo a ser locado: "
   _vehicleId <- getLine
   let ve = getVehicle (read _vehicleId :: Int) availableVehicles
   
   if isNothing ve
     then do
-      putStrLn "\nErro! Veículo não encontrado. Digite 1 para continuar ou 0 para voltar."
+      putStrLn "\nErro! Veiculo não encontrado. Digite 1 para continuar ou 0 para voltar."
       opt <- getLine
       if read opt == 1 then rent else menuRents
     else do
@@ -76,12 +76,12 @@ rent = do
 
       if isNothing cust
         then do
-          putStrLn "\nErro! Cliente não encontrado. Digite 1 para continuar ou 0 para voltar."
+          putStrLn "\nErro! Cliente nao encontrado. Digite 1 para continuar ou 0 para voltar."
           opt <- getLine
           if read opt == 1 then rent else menuRents
         else do
           let Just justCust = cust 
-          putStrLn "Data de locação (dd/mm/yyyy): "
+          putStrLn "Data de locacao (dd/mm/yyyy): "
           _date <- getLine
           let newRent = RentInstance {
             rentId              = genRentId rents, 
@@ -118,7 +118,7 @@ devolution = do
   rentIdGet <- getLine
   putStrLn "\nQuilometragem rodada: "
   kmGet <- getLine
-  putStrLn "\nData de devolução: (dd/mm/yyyy)"
+  putStrLn "\nData de devolucao: (dd/mm/yyyy)"
   retDate <- getLine
   -- read list
   listRents <- readRentFromJSON
