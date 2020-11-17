@@ -55,7 +55,16 @@ optionAddVehicle = do
   putStrLn "Ano: "
   _year <- getLine
   lista <- readVehiclesFromJSON
-  let ve = VehicleInstance {vehicleId = genVehicleId lista, plate = _plate, kms = read _kms :: Int, category = _category, model=_model, brand = _brand, color = _color, year = read _year :: Int}
+  let ve = VehicleInstance {
+    vehicleId = genVehicleId lista, 
+    plate     = _plate, 
+    kms       = read _kms :: Int, 
+    category  = _category, 
+    model     =_model, 
+    brand     = _brand, 
+    color     = _color, 
+    year      = read _year :: Int
+  }
   let list = addVehicleToList lista ve
   writeVehicleToJSON list
   
@@ -77,7 +86,7 @@ optionUpdateVehicle = do
   vehicleIdEdit <- getLine
   lista <- readVehiclesFromJSON
   
-  let veicReturn = getVehicle (read vehicleIdEdit :: Int) lista
+  let Just veicReturn = getVehicle (read vehicleIdEdit :: Int) lista
   putStrLn "Editando veículo: "
   putStrLn $ listVehicle [veicReturn]
   
@@ -97,7 +106,16 @@ optionUpdateVehicle = do
   putStrLn "Novo ano: "
   _year <- getLine
 
-  let ve = VehicleInstance {vehicleId = vehicleId veicReturn, plate = _plate, kms = read _kms :: Int, category = _category, model=_model, brand = _brand, color = _color, year = read _year :: Int}
+  let ve = VehicleInstance {
+    vehicleId = vehicleId veicReturn, 
+    plate     = _plate, 
+    kms       = read _kms :: Int, 
+    category  = _category, 
+    model     =_model, 
+    brand     = _brand, 
+    color     = _color, 
+    year      = read _year :: Int
+  }
   let list = addVehicleToList listaAtualizada ve
   
   writeVehicleToJSON $ sortVehicleById list
@@ -129,10 +147,15 @@ rmVehicle x (y:ys)
   | otherwise = y : rmVehicle x ys
 
 -- List Vehicles
-getVehicle :: Int -> [Vehicle] -> Vehicle
-getVehicle _ [] = error "Lista vazia!"
-getVehicle y (x:xs)  | y == vehicleId x = x
+getVehicle :: Int -> [Vehicle] -> Maybe Vehicle
+getVehicle _ [] = Nothing
+getVehicle y (x:xs)  | y == vehicleId x = Just x
                      | otherwise = getVehicle y xs
+
+getVehicleViaPlate :: Int -> [Vehicle] -> Maybe Vehicle
+getVehicleViaPlate _ [] = Nothing
+getVehicleViaPlate y (x:xs)  | y == vehicleId x = Just x
+                     | otherwise = getVehicleViaPlate y xs
 
 printVehicles :: [Vehicle] -> IO ()
 printVehicles vehicles = putStrLn ("\n\nID - Placa - Categoria - Marca - Modelo - Cor - Ano - Kms\n\n" ++ listVehicle vehicles ++ "\n")
@@ -143,22 +166,22 @@ listVehicle (x:xs) = toStringVehicle x ++ ['\n'] ++ listVehicle xs
 
 toStringVehicle :: Vehicle -> String
 toStringVehicle VehicleInstance {
-  vehicleId = _vehicleId, 
-  plate = _plate, 
-  kms = _kms, 
-  category = _category, 
-  brand = _brand, 
-  model = _model,
-  color = _color, 
-  year = _year } = 
+  vehicleId    = _vehicleId, 
+  plate        = _plate, 
+  kms          = _kms, 
+  category     = _category, 
+  brand        = _brand, 
+  model        = _model,
+  color        = _color, 
+  year         = _year } = 
     show _vehicleId ++ " - " ++ 
-    _plate ++ " - " ++ 
-    _category ++ " - " ++ 
-    _brand ++ " - " ++ 
-    _model ++ " - " ++
-    _color ++ " - " ++ 
-    show _year ++ " - " ++ 
-    show _kms ++ "km" 
+    _plate          ++ " - " ++ 
+    _category       ++ " - " ++ 
+    _brand          ++ " - " ++ 
+    _model          ++ " - " ++
+    _color          ++ " - " ++ 
+    show _year      ++ " - " ++ 
+    show _kms       ++ "km" 
 
 -- JSON IO
 writeVehicleToJSON :: [Vehicle] -> IO ()

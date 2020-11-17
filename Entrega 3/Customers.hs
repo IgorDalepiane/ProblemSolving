@@ -9,10 +9,8 @@ import qualified Data.ByteString.Lazy as B
 import Data.List
 
 data Customer = CustomerInstance {
-    customerId :: Int,
-    customerName :: String,
-    idCNH :: String,
-    programPoints :: Int
+    customerId, programPoints :: Int,
+    cnh, name :: String
 } deriving (Generic, Show)
 
 instance ToJSON Customer where
@@ -44,14 +42,14 @@ optionAddCustomer :: IO ()
 optionAddCustomer = do
   putStrLn "\n\nCadastro de novo cliente"
   putStrLn "\nNome: "
-  nameGet <- getLine
+  _name <- getLine
   putStrLn "\nNumero da CNH: "
-  idCNHGet <- getLine
+  _cnh <- getLine
   lista <- readCustomersFromJSON
-  let newCustomer = CustomerInstance {customerId = genCustomerId lista, customerName = nameGet, idCNH = idCNHGet, programPoints = 0}
+  let newCustomer = CustomerInstance {customerId = genCustomerId lista, name = _name, cnh = _cnh, programPoints = 0}
   let list = addCustomerToList lista newCustomer
   writeCustomerToJSON list
-  putStrLn $ "\nO cliente " ++ nameGet ++ " foi adicionado com sucesso! \n"
+  putStrLn $ "\nO cliente " ++ _name ++ " foi adicionado com sucesso! \n"
 
 genCustomerId :: [Customer] -> Int
 genCustomerId [] = 0
@@ -71,17 +69,17 @@ optionUpdateCustumer = do
   customerIdToEdit <- getLine
   lista <- readCustomersFromJSON
   
-  let returnedCustomer = getCustomer (read customerIdToEdit :: Int) lista
+  let Just returnedCustomer = getCustomer (read customerIdToEdit :: Int) lista
   putStrLn "Editando cliente: "
   putStrLn $ listCustomer [returnedCustomer]
   
   let listaAtualizada = rmCustomer (read customerIdToEdit :: Int) lista
   putStrLn "\nNovo Nome: "
-  nameGet <- getLine
+  _name <- getLine
   putStrLn "\nNovo Numero da CNH: "
-  idCNHGet <- getLine
+  _cnh <- getLine
 
-  let newCustomer = CustomerInstance {customerId = customerId returnedCustomer, customerName = nameGet, idCNH = idCNHGet, programPoints = programPoints returnedCustomer}
+  let newCustomer = CustomerInstance {customerId = customerId returnedCustomer, name = _name, cnh = _cnh, programPoints = programPoints returnedCustomer}
   let list = addCustomerToList listaAtualizada newCustomer
 
   writeCustomerToJSON $ sortCustomerById list
@@ -112,10 +110,10 @@ rmCustomer x (y : ys)
   | otherwise = y : rmCustomer x ys
 
 -- List Customers
-getCustomer :: Int -> [Customer] -> Customer
-getCustomer _ [] = error "Lista vazia!"
+getCustomer :: Int -> [Customer] -> Maybe Customer
+getCustomer _ [] = Nothing
 getCustomer y (x:xs)  
-  | y == customerId x = x
+  | y == customerId x = Just x
   | otherwise = getCustomer y xs
 
 printCustomers :: [Customer] -> IO ()
@@ -126,7 +124,15 @@ listCustomer [] = ""
 listCustomer (x : xs) = toStringCustomer x ++ ['\n'] ++ listCustomer xs
 
 toStringCustomer :: Customer -> String
-toStringCustomer CustomerInstance {customerId = i, idCNH = cnh, customerName = n, programPoints = pp} = show i ++ " - " ++ cnh ++ " - " ++ n ++ " - " ++ show pp ++ "pts"
+toStringCustomer CustomerInstance {
+  customerId    = i, 
+  cnh           = cnh, 
+  name          = n, 
+  programPoints = pp 
+} = show i  ++ " - " ++ 
+    cnh     ++ " - " ++ 
+    n       ++ " - " ++ 
+    show pp ++ "pts"
 
 -- JSON IO
 writeCustomerToJSON :: [Customer] -> IO ()
