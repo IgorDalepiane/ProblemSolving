@@ -6,12 +6,11 @@ module Customers where
 import Data.Aeson
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
+import Data.List
 
-data Customer = Customer { 
-    customerId :: Int,
-    customerName :: String,
-    idCNH :: String,
-    programPoints :: Int
+data Customer = CustomerInstance {
+    customerId, programPoints :: Int,
+    cnh, name :: String
 } deriving (Generic, Show)
 
 instance ToJSON Customer where
@@ -28,90 +27,94 @@ menuCustomers = do
   putStrLn "0 - voltar"
   putStrLn "Opcao: "
   option <- getLine
-  if read option == 0 then putStrLn "Retornando..." else do selectedOptionCustomer (read option)
+  if read option == 0 then putStrLn "Retornando..." else do selectedOptionCustomers (read option)
 
-selectedOptionCustomer :: Int -> IO ()
-selectedOptionCustomer opcao
-  | opcao == 1 = do addCustomer; menuCustomers
-  | opcao == 2 = do editCustumer; menuCustomers
-  | opcao == 3 = do removeCustomer; menuCustomers
-  | opcao == 4 = do lista <- readFromJSON; printCustomers lista; menuCustomers
-  | otherwise = do readFromJSON; menuCustomers
+selectedOptionCustomers :: Int -> IO ()
+selectedOptionCustomers opcao
+  | opcao == 1 = do optionAddCustomer; menuCustomers
+  | opcao == 2 = do optionUpdateCustumer; menuCustomers
+  | opcao == 3 = do optionRemoveCustomer; menuCustomers
+  | opcao == 4 = do lista <- readCustomersFromJSON; printCustomers lista; menuCustomers
+  | otherwise = do putStrLn "\n\nInsira uma opção válida.\n"; menuCustomers
 
 -- Add Customer
-
-addCustomer :: IO ()
-addCustomer = do
+optionAddCustomer :: IO ()
+optionAddCustomer = do
   putStrLn "\n\nCadastro de novo cliente"
   putStrLn "\nNome: "
-  nameGet <- getLine
+  _name <- getLine
   putStrLn "\nNumero da CNH: "
-  idCNHGet <- getLine
+  _cnh <- getLine
+  lista <- readCustomersFromJSON
+  let newCustomer = CustomerInstance {customerId = genCustomerId lista, name = _name, cnh = _cnh, programPoints = 0}
+  let list = addCustomerToList lista newCustomer
+  writeCustomerToJSON list
+  putStrLn $ "\nO cliente " ++ _name ++ " foi adicionado com sucesso! \n"
 
-  lista <- readFromJSON
-  let newCustomer = Customer {customerId = listlength lista, customerName = nameGet, idCNH = idCNHGet, programPoints = 0}
-  let list = addToList lista newCustomer
-  writeToJSON list
-  putStrLn $ "\nO cliente " ++ nameGet ++ " foi adicionado com sucesso! \n"
-
-generateIndex :: [Customer] -> Int
-generateIndex [] = 0
-generateIndex x = do
+genCustomerId :: [Customer] -> Int
+genCustomerId [] = 0
+genCustomerId x = do
   let lastCustomer = last x
   customerId lastCustomer + 1
 
-listlength :: [Customer] -> Int
-listlength [] = 0
-listlength (_:xs) = 1 + listlength xs
+addCustomerToList :: [Customer] -> Customer -> [Customer]
+addCustomerToList [] x = [x]
+addCustomerToList x ve = x ++ [ve]
 
-addToList :: [Customer] -> Customer -> [Customer]
-addToList [] x = [x]
-addToList x ve = x ++ [ve]
-
--- Remove Customer
-
-editCustumer :: IO ()
-editCustumer = do
+-- Update Customer
+optionUpdateCustumer :: IO ()
+optionUpdateCustumer = do
   putStrLn "\n\nEditar um cliente"
   putStrLn "\nIdentificador do Cliente: "
   customerIdToEdit <- getLine
-  lista <- readFromJSON
-  let returnedCustomer = returnItem (read customerIdToEdit :: Int) lista
-  let listaAtualizada = removeItem (read customerIdToEdit :: Int) lista
-  writeToJSON listaAtualizada
+  lista <- readCustomersFromJSON
+  
+  let Just returnedCustomer = getCustomer (read customerIdToEdit :: Int) lista
+  putStrLn "Editando cliente: "
+  putStrLn $ listCustomer [returnedCustomer]
+  
+  let listaAtualizada = rmCustomer (read customerIdToEdit :: Int) lista
   putStrLn "\nNovo Nome: "
-  nameGet <- getLine
+  _name <- getLine
   putStrLn "\nNovo Numero da CNH: "
-  idCNHGet <- getLine
-  lista <- readFromJSON
-  let newCustomer = Customer {customerId = customerId returnedCustomer, customerName = nameGet, idCNH = idCNHGet, programPoints = programPoints returnedCustomer}
-  let list = addToList lista newCustomer
-  writeToJSON list
-  putStrLn $ "\nO cliente " ++ nameGet ++ " foi editado com sucesso! \n"
+  _cnh <- getLine
 
-returnItem :: Int -> [Customer] -> Customer
-returnItem _ [] = error "Empty List!"
-returnItem y (x:xs)  | y <= 0 = x
-                 | otherwise = returnItem (y-1) xs
+  let newCustomer = CustomerInstance {customerId = customerId returnedCustomer, name = _name, cnh = _cnh, programPoints = programPoints returnedCustomer}
+  let list = addCustomerToList listaAtualizada newCustomer
+
+  writeCustomerToJSON $ sortCustomerById list
+
+  putStrLn "\nO cliente antigo: "
+  putStrLn $ listCustomer [returnedCustomer]
+  putStrLn "foi editado para: "
+  putStrLn $ listCustomer [newCustomer]
+
+sortCustomerById :: [Customer] -> [Customer]
+sortCustomerById = sortOn customerId
+
 -- Remove Customer
-
-removeItem :: Int -> [Customer] -> [Customer]
-removeItem _ [] = []
-removeItem x (y : ys)
-  | x == customerId y = removeItem x ys
-  | otherwise = y : removeItem x ys
-
-removeCustomer :: IO ()
-removeCustomer = do
+optionRemoveCustomer :: IO ()
+optionRemoveCustomer = do
   putStrLn "\n\nRemocao de cliente"
   putStrLn "\nIdentificador do cliente: "
   customerIdToDelete <- getLine
-  lista <- readFromJSON
-  let listaAtualizada = removeItem (read customerIdToDelete :: Int) lista
-  writeToJSON listaAtualizada
+  lista <- readCustomersFromJSON
+  let listaAtualizada = rmCustomer (read customerIdToDelete :: Int) lista
+  writeCustomerToJSON listaAtualizada
   putStrLn $ "\nO cliente com o identificador " ++ customerIdToDelete ++ " foi removido com sucesso! \n"
 
--- List customers
+rmCustomer :: Int -> [Customer] -> [Customer]
+rmCustomer _ [] = []
+rmCustomer x (y : ys)
+  | x == customerId y = rmCustomer x ys
+  | otherwise = y : rmCustomer x ys
+
+-- List Customers
+getCustomer :: Int -> [Customer] -> Maybe Customer
+getCustomer _ [] = Nothing
+getCustomer y (x:xs)  
+  | y == customerId x = Just x
+  | otherwise = getCustomer y xs
 
 printCustomers :: [Customer] -> IO ()
 printCustomers customers = putStrLn ("\n\nId - CNH - Nome do cliente - Pontos de fidelidade\n\n" ++ listCustomer customers ++ "\n")
@@ -120,14 +123,24 @@ listCustomer :: [Customer] -> String
 listCustomer [] = ""
 listCustomer (x : xs) = toStringCustomer x ++ ['\n'] ++ listCustomer xs
 
--- JSON actions
+toStringCustomer :: Customer -> String
+toStringCustomer CustomerInstance {
+  customerId    = i, 
+  cnh           = cnh, 
+  name          = n, 
+  programPoints = pp 
+} = show i  ++ " - " ++ 
+    cnh     ++ " - " ++ 
+    n       ++ " - " ++ 
+    show pp ++ "pts"
 
-writeToJSON :: [Customer] -> IO ()
-writeToJSON list = do
+-- JSON IO
+writeCustomerToJSON :: [Customer] -> IO ()
+writeCustomerToJSON list = do
   B.writeFile "db/customers.json" (encode list)
 
-readFromJSON :: IO [Customer]
-readFromJSON = do
+readCustomersFromJSON :: IO [Customer]
+readCustomersFromJSON = do
   input <- B.readFile "db/customers.json"
 
   let customers = decode input :: Maybe [Customer]
@@ -135,6 +148,3 @@ readFromJSON = do
   case customers of
     Nothing -> return []
     Just customers -> return customers
-
-toStringCustomer :: Customer -> String
-toStringCustomer Customer {customerId = i, idCNH = cnh, customerName = n, programPoints = pp} = show i ++ " - " ++ cnh ++ " - " ++ n ++ " - " ++ show pp ++ "pts"

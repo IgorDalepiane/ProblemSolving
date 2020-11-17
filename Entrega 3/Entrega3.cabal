@@ -8,13 +8,13 @@ version:             0.1.0.0
 -- description:
 -- bug-reports:
 -- license:
-license-file:        LICENSE
+-- license-file:        LICENSE
 author:              Brandow B., Igor D. da C., Lucas A. F. e Matheus K.
 maintainer:          exemplo@gmail.com
 -- copyright:
 -- category:
 build-type:          Simple
-extra-source-files:  CHANGELOG.md, README.md
+extra-source-files:  README.md
 
 executable Entrega3
   main-is:             Main.hs
