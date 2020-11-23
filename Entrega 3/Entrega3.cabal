@@ -22,12 +22,14 @@ executable Entrega3
     Vehicles,
     Customers,
     Rents,
-    Menu
+    Menu,
+    Logos
   -- other-extensions:
   build-depends:
     base >=4.14,
     aeson,
     bytestring,
-    time
+    time,
+    ansi-terminal
   -- hs-source-dirs:
   default-language:    Haskell2010
