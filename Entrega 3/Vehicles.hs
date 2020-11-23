@@ -3,14 +3,31 @@
 module Vehicles where
 
 import Data.Aeson
-import GHC.Generics
+    ( decode,
+      encode,
+      defaultOptions,
+      genericToEncoding,
+      FromJSON,
+      ToJSON(toEncoding) )
+import GHC.Generics ( Generic )
 import qualified Data.ByteString.Lazy as B
-import Data.List
+import Data.List ( sortOn )
+import Logos ( logoVehicles )
+import Control.Monad ( when )
+import Control.Exception ( try, throw, Exception )
+import System.Console.ANSI ( clearScreen )
+import Data.Maybe ( isNothing )
+import Data.Data ( Typeable )
+
+data VehicleException = 
+  NenhumVeiculoCadastrado
+  | VeiculoNaoEncontrado
+  deriving (Show, Typeable)
 
 data Vehicle = VehicleInstance {
   vehicleId, kms, year :: Int,
   categoryPrice, kilometerPrice :: Float,
-  plate, category, model, brand, color :: String
+  plate, category, model, brand, color, state :: String
 } deriving (Generic, Show)
 
 instance ToJSON Vehicle where
@@ -18,8 +35,11 @@ instance ToJSON Vehicle where
 
 instance FromJSON Vehicle
 
+instance Exception VehicleException
+
 menuVehicles :: IO()
 menuVehicles = do
+  logoVehicles
   putStrLn "1 - Cadastrar novo veículo"
   putStrLn "2 - Alterar dados de veículo"
   putStrLn "3 - Excluir veículo"
@@ -32,15 +52,20 @@ menuVehicles = do
 selectedOptionVehicles :: Int -> IO()
 selectedOptionVehicles option 
   | option == 1 = do optionAddVehicle; menuVehicles
-  | option == 2 = do optionUpdateVehicle; menuVehicles
+  | option == 2 = do 
+    result <- try optionUpdateVehicle :: IO (Either VehicleException ())
+    case result of
+      Left ex -> do clearScreen; putStrLn $ "\nErro: " ++ show ex; menuVehicles
+      Right _ -> menuVehicles
   | option == 3 = do optionRemoveVehicle; menuVehicles
   | option == 4 = do lista <- readVehiclesFromJSON; printVehicles lista; menuVehicles
   | otherwise = do putStrLn "\n\nInsira uma opção válida.\n"; menuVehicles
 
+
 -- Add Vehicle
 optionAddVehicle :: IO()
 optionAddVehicle = do
-  putStrLn "\n\n\n### Cadastro de veículo ###"
+  putStrLn "### Cadastro de veículo ###"
   putStrLn "Placa: "
   _plate <- getLine
   putStrLn "Quilometragem: "
@@ -70,7 +95,8 @@ optionAddVehicle = do
     model     =_model, 
     brand     = _brand, 
     color     = _color, 
-    year      = read _year :: Int
+    year      = read _year :: Int,
+    state = "Disponivel"
   }
   let list = addVehicleToList lista ve
   writeVehicleToJSON list
@@ -88,14 +114,17 @@ addVehicleToList x ve = x ++ [ve]
 -- Update Vehicle
 optionUpdateVehicle :: IO ()
 optionUpdateVehicle = do
-  putStrLn "\n\n###Editar um veículo###"
+  lista <- readVehiclesFromJSON
+  when (null lista) $ throw NenhumVeiculoCadastrado
+  putStrLn "###Editar um veículo###"
   putStrLn "Identificador do Veículo: "
   vehicleIdEdit <- getLine
-  lista <- readVehiclesFromJSON
   
-  let Just veicReturn = getVehicle (read vehicleIdEdit :: Int) lista
+  let veicReturn = getVehicle (read vehicleIdEdit :: Int) lista
+  when (isNothing veicReturn) $ throw VeiculoNaoEncontrado
+  let Just justVe = veicReturn
   putStrLn "Editando veículo: "
-  putStrLn $ listVehicle [veicReturn]
+  putStrLn $ listVehicle [justVe]
   
   let listaAtualizada = rmVehicle (read vehicleIdEdit :: Int) lista
   putStrLn "Nova placa: "
@@ -116,9 +145,11 @@ optionUpdateVehicle = do
   _color <- getLine
   putStrLn "Novo ano: "
   _year <- getLine
+  putStrLn "Estado (Disponivel, Alugado, Manutencao): "
+  _state <- getLine
 
   let ve = VehicleInstance {
-    vehicleId = vehicleId veicReturn, 
+    vehicleId = vehicleId justVe, 
     plate     = _plate, 
     kms       = read _kms :: Int, 
     category  = _category, 
@@ -127,14 +158,15 @@ optionUpdateVehicle = do
     model     =_model, 
     brand     = _brand, 
     color     = _color, 
-    year      = read _year :: Int
+    year      = read _year :: Int,
+    state = _state
   }
   let list = addVehicleToList listaAtualizada ve
   
   writeVehicleToJSON $ sortVehicleById list
 
   putStrLn "\nO veiculo antigo: "
-  putStrLn $ listVehicle [veicReturn]
+  putStrLn $ listVehicle [justVe]
   putStrLn "foi editado para: "
   putStrLn $ listVehicle [ve]
 
@@ -144,10 +176,11 @@ sortVehicleById = sortOn vehicleId
 -- Remove Vehicle
 optionRemoveVehicle :: IO()
 optionRemoveVehicle = do 
+  lista <- readVehiclesFromJSON
+  when (null lista) $ throw NenhumVeiculoCadastrado
   putStrLn "\n\n\n### Remoção de veículo ###\n\n\n"
   putStrLn "Índice do veículo: "
   _vehicleId <- getLine
-  lista <- readVehiclesFromJSON
   let listaAtualizada = rmVehicle (read _vehicleId :: Int) lista
   writeVehicleToJSON listaAtualizada
   putStrLn "Lista atualizada:"
@@ -171,7 +204,7 @@ getVehicleViaPlate y (x:xs)  | y == vehicleId x = Just x
                      | otherwise = getVehicleViaPlate y xs
 
 printVehicles :: [Vehicle] -> IO ()
-printVehicles vehicles = putStrLn ("\n\nID - Placa - Categoria - Diária (R$) - Valor do Km (R$)- Marca - Modelo - Cor - Ano - Kms\n\n" ++ listVehicle vehicles ++ "\n")
+printVehicles vehicles = putStrLn ("\n\nID - Placa - Categoria - Diária (R$) - Valor do Km (R$)- Marca - Modelo - Cor - Ano - Kms - Estado\n\n" ++ listVehicle vehicles)
 
 listVehicle :: [Vehicle] -> String
 listVehicle [] = ""
@@ -188,7 +221,8 @@ toStringVehicle VehicleInstance {
   brand        = _brand, 
   model        = _model,
   color        = _color, 
-  year         = _year } = 
+  year         = _year, 
+  state        = _state } = 
     show _vehicleId ++ " - " ++ 
     _plate          ++ " - " ++ 
     _category       ++ " - " ++ 
@@ -198,7 +232,8 @@ toStringVehicle VehicleInstance {
     _model          ++ " - " ++
     _color          ++ " - " ++ 
     show _year      ++ " - " ++ 
-    show _kms       ++ "km" 
+    show _kms       ++ "km - " ++
+    _state          
 
 -- JSON IO
 writeVehicleToJSON :: [Vehicle] -> IO ()
