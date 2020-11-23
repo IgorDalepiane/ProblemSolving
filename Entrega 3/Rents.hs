@@ -4,6 +4,11 @@
 module Rents where
 import Customers
 import Vehicles
+    (sortVehicleById, rmVehicle, addVehicleToList, writeVehicleToJSON, year, color, model, brand, Vehicle(VehicleInstance), state,  getVehicle,
+      printVehicles,
+      readVehiclesFromJSON,
+      Vehicle(vehicleId, category, plate, kms, categoryPrice,
+              kilometerPrice) )
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
 import GHC.Generics
@@ -16,6 +21,7 @@ import Data.Maybe
 import Control.Monad
 import System.Console.ANSI
 import Logos
+
 data RentException = 
   VeiculoNaoEncontrado 
   | ClienteNaoEncontrado 
@@ -76,11 +82,16 @@ getAvailableVehicles (x:xs) (y:ys) z
   | vehicleId x == vehicleRentId y = getAvailableVehicles xs z z
   | vehicleId x /= vehicleRentId y = getAvailableVehicles (x:xs) ys z
 
+rmBrokenRented :: [Vehicle] -> [Vehicle]
+rmBrokenRented [] = []
+rmBrokenRented (x:xs) | state x == "Disponivel" = x : rmBrokenRented xs
+                      | otherwise = rmBrokenRented xs
+
 rent :: IO()
 rent = do
   vehicles <- readVehiclesFromJSON
   rents <- readRentFromJSON
-  let availableVehicles = getAvailableVehicles vehicles rents rents
+  let availableVehicles = rmBrokenRented vehicles
   when (null availableVehicles) $ throw NenhumVeiculoDisponivel
 
   clearScreen
@@ -94,6 +105,19 @@ rent = do
   when (isNothing ve) $ throw VeiculoNaoEncontrado
 
   let Just justVe = ve 
+  let newVehicle = VehicleInstance {
+    vehicleId    = vehicleId justVe, 
+    plate        = plate justVe, 
+    kms          = kms justVe, 
+    category     = category justVe, 
+    categoryPrice= categoryPrice justVe,
+    kilometerPrice= kilometerPrice justVe,
+    brand        = brand justVe, 
+    model        = model justVe,
+    color        = color justVe, 
+    year         = year justVe, 
+    state        = "Alugado"
+  }
   customers <- readCustomersFromJSON
   putStrLn "Clientes:"
   printCustomers customers
@@ -121,8 +145,10 @@ rent = do
     returned            = False
   }
 
-  let listRents = addRentsToList rents newRent
-  writeRentToJSON listRents
+  writeRentToJSON $ addRentsToList rents newRent
+  -- update vehicle state
+  writeVehicleToJSON $ sortVehicleById $ addVehicleToList (rmVehicle (vehicleId justVe) vehicles) newVehicle
+
   clearScreen
   putStrLn "O veiculo foi locado com sucesso."
 
@@ -167,8 +193,8 @@ devolution = do
   let Just cust = getCustomer custId lista
   let listaAtualizada = rmCustomer custId lista
   -- calculate rent value
-  listVeihcles <- readVehiclesFromJSON
-  let vehicle = getVehicle (vehicleRentId justRent) listVeihcles
+  listVehicles <- readVehiclesFromJSON
+  let vehicle = getVehicle (vehicleRentId justRent) listVehicles
   let Just justVehicle = vehicle
   let rentValue = (fromIntegral dias * categoryPrice justVehicle) + ((read kmGet::Float) * kilometerPrice justVehicle)
   
@@ -196,9 +222,21 @@ devolution = do
   }
   -- add customer to list
   let listWithNewCustomer = addCustomerToList listaAtualizada updatedCust
-  print listWithNewCustomer
   writeCustomerToJSON $ sortCustomerById listWithNewCustomer
   -- change status
+  let newVehicle = VehicleInstance {
+    vehicleId    = vehicleId justVehicle, 
+    plate        = plate justVehicle, 
+    kms          = kms justVehicle, 
+    category     = category justVehicle, 
+    categoryPrice= categoryPrice justVehicle,
+    kilometerPrice= kilometerPrice justVehicle,
+    brand        = brand justVehicle, 
+    model        = model justVehicle,
+    color        = color justVehicle, 
+    year         = year justVehicle, 
+    state        = "Disponivel"
+  }
   let newRent = RentInstance {
     rentId              = rentId justRent, 
     customerRentId      = custId, 
@@ -209,12 +247,14 @@ devolution = do
     vehicleRentPlate    = vehicleRentPlate justRent,
     vehicleKms          = vehicleKms justRent,
     rentDate            = rentDate justRent, 
-    returnDate          = show _returnDate, 
+    returnDate          = show $ formatTime defaultTimeLocale "%d/%m/%Y" _returnDate, 
     paidValue           = newRentValue,
     returned            = True
   }
 
   writeRentToJSON $ addRentsToList listRentsUpdated newRent
+  -- update vehicle state
+  writeVehicleToJSON $ sortVehicleById $ addVehicleToList (rmVehicle (vehicleId justVehicle) listVehicles) newVehicle
   clearScreen
   putStrLn $ "Devolucao realizada com sucesso\nO cliente " ++ name updatedCust ++ " recebeu "++ show _newPoints ++" pontos e agora esta com "++ show (programPoints updatedCust) ++" pontos totais no programa de fidelidade"
 

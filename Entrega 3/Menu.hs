@@ -11,7 +11,6 @@ menu = do
     putStrLn "1 - Gerenciar Veiculos"
     putStrLn "2 - Gerenciar Clientes"
     putStrLn "3 - Gerenciar Locacoes"
-    putStrLn "4 - Gerar Relatorio"
     putStrLn "5 - Gerar Orcamento"
     putStrLn "0 - Sair" 
     putStrLn "Opcao: "
@@ -20,9 +19,8 @@ menu = do
 
 
 selectedOption :: Int -> IO()
-selectedOption opcao | opcao == 1 = do {clearScreen; logoVehicles; menuVehicles; clearScreen; logo; menu} 
+selectedOption opcao | opcao == 1 = do {clearScreen; menuVehicles; clearScreen; logo; menu} 
                      | opcao == 2 = do {clearScreen; logoClient; menuCustomers; clearScreen; logo; menu}
                      | opcao == 3 = do {clearScreen; menuRents; clearScreen; logo; menu}
-                     | opcao == 4 = do {clearScreen; logoReport; putStrLn "Opcao em Desenvolvimento"; clearScreen; logo; menu}
                      | opcao == 5 = do {clearScreen; logoBudget; putStrLn "Opcao em Desenvolvimento"; clearScreen; logo; menu}
                      | otherwise =  do {putStrLn "Esta opcao nao e valida. Por favor selecione uma opcao listada acima"; clearScreen; logo; menu}
