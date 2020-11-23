@@ -65,6 +65,7 @@ selectedOptionVehicles option
 -- Add Vehicle
 optionAddVehicle :: IO()
 optionAddVehicle = do
+  clearScreen
   putStrLn "### Cadastro de veículo ###"
   putStrLn "Placa: "
   _plate <- getLine
@@ -100,6 +101,9 @@ optionAddVehicle = do
   }
   let list = addVehicleToList lista ve
   writeVehicleToJSON list
+
+  clearScreen
+  putStrLn "Veiculo cadastrado com sucesso"
   
 genVehicleId :: [Vehicle] -> Int
 genVehicleId [] = 0
@@ -116,6 +120,8 @@ optionUpdateVehicle :: IO ()
 optionUpdateVehicle = do
   lista <- readVehiclesFromJSON
   when (null lista) $ throw NenhumVeiculoCadastrado
+
+  clearScreen
   putStrLn "###Editar um veículo###"
   putStrLn "Identificador do Veículo: "
   vehicleIdEdit <- getLine
