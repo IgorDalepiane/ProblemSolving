@@ -1,8 +1,1 @@
-[
-    {
-        "customerId": 0,
-        "name": "Xablau atomico",
-        "cnh": "12345",
-        "programPoints": 0
-    }
-]
+[{"customerId":0,"programPoints":10,"cnh":"12345","name":"Xablau atomico"}]

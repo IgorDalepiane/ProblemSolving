@@ -1,1 +1,62 @@
-[{"vehicleId":0,"kms":500,"year":2012,"plate":"97868","category":"Popular","model":"Gol","brand":"Volksvagen","color":"Vermelho"},{"vehicleId":1,"kms":150000,"year":2020,"plate":"IDK-9786","category":"Esportivo","model":"Ferrari","brand":"Ferrari","color":"Vermelho"},{"vehicleId":2,"kms":15000,"year":220,"plate":"IDK-986","category":"Esporivo","model":"Ferari","brand":"Ferari","color":"Vemelho"}]
+[
+  {
+    "vehicleId": 0,
+    "kms": 500,
+    "year": 2012,
+    "plate": "97868",
+    "category": "Popular",
+    "categoryPrice": 150,
+    "kilometerPrice" : 20,
+    "model": "Gol",
+    "brand": "Volksvagen",
+    "color": "Vermelho"
+  },
+  {
+    "vehicleId": 1,
+    "kms": 150000,
+    "year": 2020,
+    "plate": "IDK-9786",
+    "category": "Esportivo",
+    "categoryPrice": 6000,
+    "kilometerPrice" : 50,
+    "model": "Ferrari",
+    "brand": "Ferrari",
+    "color": "Vermelho"
+  },
+  {
+    "vehicleId": 2,
+    "kms": 15000,
+    "year": 220,
+    "plate": "IDK-986",
+    "category": "Esporivo",
+    "categoryPrice": 6000,
+    "kilometerPrice" : 50,
+    "model": "Ferari",
+    "brand": "Ferari",
+    "color": "Vemelho"
+  },
+  {
+    "vehicleId": 3,
+    "kms": 15000,
+    "year": 220,
+    "plate": "IDK-986",
+    "category": "Esporivo",
+    "categoryPrice": 2000,
+    "kilometerPrice" : 50,
+    "model": "Ferari",
+    "brand": "Ferari",
+    "color": "Vemelho"
+  },
+  {
+    "vehicleId": 4,
+    "kms": 15000,
+    "year": 220,
+    "plate": "IDK-986",
+    "category": "Esporivo",
+    "categoryPrice": 3000,
+    "kilometerPrice" : 50,
+    "model": "Ferari",
+    "brand": "Ferari",
+    "color": "Vemelho"
+  }
+]

@@ -2,17 +2,19 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
 
 module Rents where
-
 import Customers
 import Vehicles
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
 import GHC.Generics
+import Data.List
 import Data.Maybe (isNothing)
+import Data.Time
 
 data Rent = RentInstance { 
   rentId, customerRentId, vehicleRentId, vehicleKms :: Int,
   customerRentName, customerRentCNH, vehicleRentCategory, vehicleRentPlate, rentDate, returnDate :: String,
+  paidValue :: Float,
   returned :: Bool
 } deriving (Generic, Show)
 
@@ -25,14 +27,17 @@ menuRents :: IO ()
 menuRents = do
   putStrLn "1 - Cadastrar nova locacao"
   putStrLn "2 - Cadastrar devolucao"
+  putStrLn "3 - Listar locacoes"
+  putStrLn "0 - Voltar"
   putStrLn "Opcao: "
   option <- getLine
   if read option == 0 then putStrLn "Retornando..." else do selectedOptionRents (read option)
 
 selectedOptionRents :: Int -> IO ()
 selectedOptionRents opcao
-  | opcao == 1 = do rent
-  | opcao == 2 = do devolution
+  | opcao == 1 = do rent;
+  | opcao == 2 = do devolution;
+  | opcao == 3 = do list <- readRentFromJSON; printRents list;
   | otherwise = putStrLn "Opcao invalida."
 
 -- Rent
@@ -63,12 +68,14 @@ rent = do
   
   if isNothing ve
     then do
-      putStrLn "\nErro! Veiculo não encontrado. Digite 1 para continuar ou 0 para voltar."
+      putStrLn "\nErro! Veiculo nao encontrado. Digite 1 para continuar ou 0 para voltar."
       opt <- getLine
       if read opt == 1 then rent else menuRents
     else do
       let Just justVe = ve 
       customers <- readCustomersFromJSON
+      putStrLn "Clientes:"
+      printCustomers customers
       putStrLn "Id do cliente locador: "
       _customerId <- getLine
       
@@ -81,7 +88,7 @@ rent = do
           if read opt == 1 then rent else menuRents
         else do
           let Just justCust = cust 
-          putStrLn "Data de locacao (dd/mm/yyyy): "
+          putStrLn "Data de locacao (formato: dd/mm/aaaa):"
           _date <- getLine
           let newRent = RentInstance {
             rentId              = genRentId rents, 
@@ -93,6 +100,7 @@ rent = do
             vehicleRentPlate    = plate justVe,
             vehicleKms          = kms justVe,
             rentDate            = _date, 
+            paidValue           = 0,
             returnDate          = "", 
             returned            = False
           }
@@ -113,50 +121,91 @@ genRentId x = do
 
 devolution :: IO ()
 devolution = do
-  putStrLn "\n\nRealizar devolucao de um veiculo"
-  putStrLn "\nID da locacao: "
-  rentIdGet <- getLine
-  putStrLn "\nQuilometragem rodada: "
-  kmGet <- getLine
-  putStrLn "\nData de devolucao: (dd/mm/yyyy)"
-  retDate <- getLine
   -- read list
   listRents <- readRentFromJSON
-  -- search rent
-  let Just returnedRent = getRent (read rentIdGet :: Int) listRents
-  let listRentsUpdated = rmRent (read rentIdGet :: Int) listRents
-  -- CUSTOMER
-  ---- read customer
-  lista <- readCustomersFromJSON
-  let customerReturnedRent = customerRentId returnedRent
-  let Just returnedCustomer = getCustomer customerReturnedRent lista
-  let listaAtualizada = rmCustomer customerReturnedRent lista
-  ---- change points
-  let points = div (read kmGet :: Int)  100
-  let customerRentUpdated = CustomerInstance {customerId = customerId returnedCustomer, name = name returnedCustomer, cnh = cnh returnedCustomer, programPoints = points}
-  ---- add customer to list
-  let listWithNewCustomer = addCustomerToList listaAtualizada customerRentUpdated
-  writeCustomerToJSON listWithNewCustomer
-  -- change status
-  let newRent = RentInstance {
-    rentId              = rentId returnedRent, 
-    customerRentId      = customerReturnedRent, 
-    vehicleRentId       = vehicleRentId returnedRent,
-    customerRentName    = customerRentName returnedRent,
-    customerRentCNH     = customerRentCNH returnedRent,
-    vehicleRentCategory = vehicleRentCategory returnedRent,
-    vehicleRentPlate    = vehicleRentPlate returnedRent,
-    vehicleKms          = vehicleKms returnedRent,
-    rentDate            = rentDate returnedRent, 
-    returnDate          = retDate, 
-    returned            = True
-  }
-  let listRentsNewStatus = addRentsToList  listRentsUpdated newRent
-  writeRentToJSON listRentsNewStatus
-  let pointsRetunedCustomer = programPoints customerRentUpdated
-  putStrLn $ "\nDevolucao realizada com sucesso, o cliente " ++ name customerRentUpdated ++ " esta com "++ show pointsRetunedCustomer ++" pontos no programa de fidelidade\n"
+  putStrLn "\n\nRealizar devolucao de um veiculo"
+  putStrLn "Locacoes em Aberto: "
+  printRents $ getOpenRents listRents
+  putStrLn "\nID da locacao: "
+  _rentId <- getLine
+  let rent = getRent (read _rentId :: Int) listRents
+  
+  if isNothing rent
+    then do
+      putStrLn "\nErro! Locacao nao encontrada. Digite 1 para continuar ou 0 para voltar."
+      opt <- getLine
+      if read opt == 1 then devolution else menuRents
+    else do
+      let Just justRent = rent 
+      putStrLn "\nQuilometragem rodada: "
+      kmGet <- getLine
+      putStrLn "\nData de devolucao (formato: dd/mm/aaaa): "
+      dateString <- getLine
+      let _rentDate = parseTimeOrError True defaultTimeLocale "%d/%m/%Y" (rentDate justRent) :: Day
+      let _returnDate = parseTimeOrError True defaultTimeLocale "%d/%m/%Y" dateString :: Day
+      let dias = diffDays _returnDate _rentDate
+      -- remove a rent atual para modificar
+      let listRentsUpdated = rmRent (read _rentId :: Int) listRents
+      ---- read customer
+      lista <- readCustomersFromJSON
+      let custId = customerRentId justRent
+      let Just cust = getCustomer custId lista
+      let listaAtualizada = rmCustomer custId lista
+      ---- change points
+      let points = div (read kmGet :: Int)  100
+      let updatedCust = CustomerInstance {
+        customerId = custId, 
+        name = name cust, 
+        cnh = cnh cust, 
+        programPoints = points
+      }
+
+      -- calculate rent value
+      listVeihcles <- readVehiclesFromJSON
+      let vehicle = getVehicle (vehicleRentId justRent) listVeihcles
+      let Just justVehicle = vehicle
+      let rentValue = (fromIntegral dias * categoryPrice justVehicle) + ((read kmGet::Float) * kilometerPrice justVehicle)
+      
+      putStrLn $ "O valor da locacao é: R$ " ++ show rentValue
+      putStrLn $ "O cliente tem (" ++ show (programPoints cust) ++ ") pontos de fidelidade a serem usados: "
+      _p <- getLine
+      if (read _p :: Int) <= programPoints cust
+        then do
+          let discount = rentValue * ((read _p :: Float) / 10000)
+          let newRentValue = rentValue - discount
+          putStrLn $ "Novo valor: R$ " ++ show newRentValue
+          putStrLn "Continuar? 1-Sim 0-Nao"
+          _op <- getLine
+          if read _op == 1 then print "" else menuRents
+          -- add customer to list
+          let listWithNewCustomer = addCustomerToList listaAtualizada updatedCust
+          writeCustomerToJSON $ sortCustomerById listWithNewCustomer
+          -- change status
+          let newRent = RentInstance {
+            rentId              = rentId justRent, 
+            customerRentId      = custId, 
+            vehicleRentId       = vehicleRentId justRent,
+            customerRentName    = customerRentName justRent,
+            customerRentCNH     = customerRentCNH justRent,
+            vehicleRentCategory = vehicleRentCategory justRent,
+            vehicleRentPlate    = vehicleRentPlate justRent,
+            vehicleKms          = vehicleKms justRent,
+            rentDate            = rentDate justRent, 
+            returnDate          = show _returnDate, 
+            paidValue           = newRentValue,
+            returned            = True
+          }
+
+          writeRentToJSON $ addRentsToList listRentsUpdated newRent
+          putStrLn $ "\nDevolucao realizada com sucesso, o cliente " ++ name updatedCust ++ " esta com "++ show (programPoints updatedCust) ++" pontos no programa de fidelidade\n"
+        else do
+          putStrLn "\nErro! Voce nao possui pontos o suficiente. Digite 1 para voltar ou 0 para sair."
+          opt <- getLine
+          if read opt == 1 then devolution else putStrLn "Retornando..."
 
 -- List
+sortRentById :: [Rent] -> [Rent]
+sortRentById = sortOn rentId
 
 addRentsToList :: [Rent] -> Rent -> [Rent]
 addRentsToList [] x = [x]
@@ -166,6 +215,41 @@ getRent :: Int -> [Rent] -> Maybe Rent
 getRent _ [] = Nothing
 getRent y (x : xs) | y == rentId x = Just x
                    | otherwise = getRent y xs
+
+getOpenRents :: [Rent] -> [Rent]
+getOpenRents [] = []
+getOpenRents (x:xs) | not (returned x) = x : getOpenRents xs 
+                    | otherwise = getOpenRents xs
+
+printRents :: [Rent] -> IO ()
+printRents rents = putStrLn (listRent rents ++ "\n")
+
+listRent :: [Rent] -> String
+listRent [] = ""
+listRent (x:xs) = toStringRent x ++ ['\n'] ++ listRent xs
+
+toStringRent :: Rent -> String
+toStringRent RentInstance {
+  rentId              = _rentId, 
+  vehicleRentId       = _vehicleRentId, 
+  customerRentId      = _customerRentId, 
+  vehicleKms          = _vehicleKms, 
+  customerRentName    = _customerRentName, 
+  customerRentCNH     = _customerRentCNH, 
+  vehicleRentCategory = _vehicleRentCategory, 
+  vehicleRentPlate    = _vehicleRentPlate, 
+  rentDate            = _rentDate,
+  returnDate          = _returnDate } = 
+    "ID: "                ++ show _rentId         ++ "\n" ++
+    "ID Veiculo: "        ++ show _vehicleRentId  ++ "\n" ++
+    "ID Cliente: "        ++ show _customerRentId ++ "\n" ++ 
+    "Quilometragem: "     ++ show _vehicleKms     ++ "\n" ++ 
+    "Cliente Nome: "      ++ _customerRentName    ++ "\n" ++ 
+    "Cliente CNH: "       ++ _customerRentCNH     ++ "\n" ++ 
+    "Veiculo Categoria: " ++ _vehicleRentCategory ++ "\n" ++
+    "Veiculo Placa: "     ++ _vehicleRentPlate    ++ "\n" ++ 
+    "Data Locacao: "      ++ _rentDate            ++ "\n" ++
+    "Data Retorno: "      ++ _returnDate           
 
 -- Remove Rent
 

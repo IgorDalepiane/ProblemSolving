@@ -9,6 +9,7 @@ import Data.List
 
 data Vehicle = VehicleInstance {
   vehicleId, kms, year :: Int,
+  categoryPrice, kilometerPrice :: Float,
   plate, category, model, brand, color :: String
 } deriving (Generic, Show)
 
@@ -46,6 +47,10 @@ optionAddVehicle = do
   _kms <- getLine
   putStrLn "Categoria: "
   _category <- getLine
+  putStrLn "Valor da diária da categoria: "
+  _categoryPrice <- getLine
+  putStrLn "Valor do quilometro da categoria: "
+  _kilometerPrice <- getLine
   putStrLn "Modelo: "
   _model <- getLine
   putStrLn "Marca: "
@@ -60,6 +65,8 @@ optionAddVehicle = do
     plate     = _plate, 
     kms       = read _kms :: Int, 
     category  = _category, 
+    categoryPrice  = read _categoryPrice :: Float,
+    kilometerPrice = read _kilometerPrice :: Float,
     model     =_model, 
     brand     = _brand, 
     color     = _color, 
@@ -97,6 +104,10 @@ optionUpdateVehicle = do
   _kms <- getLine
   putStrLn "Nova categoria: "
   _category <- getLine
+  putStrLn "Nova diária da categoria: "
+  _categoryPrice <- getLine
+  putStrLn "Novo valor do quilometro da categoria: "
+  _kilometerPrice <- getLine
   putStrLn "Novo modelo: "
   _model <- getLine
   putStrLn "Nova marca: "
@@ -111,6 +122,8 @@ optionUpdateVehicle = do
     plate     = _plate, 
     kms       = read _kms :: Int, 
     category  = _category, 
+    categoryPrice  = read _categoryPrice :: Float, 
+    kilometerPrice  = read _kilometerPrice :: Float, 
     model     =_model, 
     brand     = _brand, 
     color     = _color, 
@@ -158,7 +171,7 @@ getVehicleViaPlate y (x:xs)  | y == vehicleId x = Just x
                      | otherwise = getVehicleViaPlate y xs
 
 printVehicles :: [Vehicle] -> IO ()
-printVehicles vehicles = putStrLn ("\n\nID - Placa - Categoria - Marca - Modelo - Cor - Ano - Kms\n\n" ++ listVehicle vehicles ++ "\n")
+printVehicles vehicles = putStrLn ("\n\nID - Placa - Categoria - Diária (R$) - Valor do Km (R$)- Marca - Modelo - Cor - Ano - Kms\n\n" ++ listVehicle vehicles ++ "\n")
 
 listVehicle :: [Vehicle] -> String
 listVehicle [] = ""
@@ -170,6 +183,8 @@ toStringVehicle VehicleInstance {
   plate        = _plate, 
   kms          = _kms, 
   category     = _category, 
+  categoryPrice= _categoryPrice,
+  kilometerPrice= _kilometerPrice,
   brand        = _brand, 
   model        = _model,
   color        = _color, 
@@ -177,6 +192,8 @@ toStringVehicle VehicleInstance {
     show _vehicleId ++ " - " ++ 
     _plate          ++ " - " ++ 
     _category       ++ " - " ++ 
+    show _categoryPrice ++ " - " ++ 
+    show _kilometerPrice ++ " - " ++
     _brand          ++ " - " ++ 
     _model          ++ " - " ++
     _color          ++ " - " ++ 
