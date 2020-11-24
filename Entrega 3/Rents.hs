@@ -24,7 +24,7 @@ import Logos
 
 data RentException = 
   VeiculoNaoEncontrado 
-  | ClienteNaoEncontrado 
+  | ClienteRentNaoEncontrado 
   | LocacaoNaoEncontrada 
   | NaoQuisContinuar 
   | PontosInsuficientes 
@@ -125,7 +125,7 @@ rent = do
   _customerId <- getLine
   
   let cust = getCustomer (read _customerId :: Int) customers
-  when (isNothing cust) $ throw ClienteNaoEncontrado
+  when (isNothing cust) $ throw ClienteRentNaoEncontrado
 
   let Just justCust = cust 
   putStrLn "Data de locacao (formato: dd/mm/aaaa):"
