@@ -44,6 +44,7 @@ menuVehicles = do
   putStrLn "2 - Alterar dados de veículo"
   putStrLn "3 - Excluir veículo"
   putStrLn "4 - Listar veículos"
+  putStrLn "5 - Pesquisar veículo"
   putStrLn "0 - Voltar" 
   putStrLn "Opcao: "
   option <- getLine
@@ -59,8 +60,70 @@ selectedOptionVehicles option
       Right _ -> menuVehicles
   | option == 3 = do optionRemoveVehicle; menuVehicles
   | option == 4 = do lista <- readVehiclesFromJSON; printVehicles lista; menuVehicles
+  | option == 5 = do clearScreen; menuSearch;
   | otherwise = do putStrLn "\n\nInsira uma opção válida.\n"; menuVehicles
 
+menuSearch :: IO()
+menuSearch = do
+  putStrLn "1 - Pesquisar por ID"
+  putStrLn "2 - Pesquisar por placa"
+  putStrLn "0 - Voltar"
+  option <- getLine
+  if read option == 0 then putStrLn "Retornando...\n" else do selectedOptionSearchVehicles (read option)
+
+selectedOptionSearchVehicles :: Int -> IO()
+selectedOptionSearchVehicles option 
+  | option == 1 = do 
+    result <- try searchVehicleById :: IO (Either VehicleException ())
+    case result of
+      Left ex -> do clearScreen; putStrLn $ "\nErro: " ++ show ex; menuSearch
+      Right _ -> menuSearch
+  | option == 2 = do 
+    result <- try searchVehicleByPlate :: IO (Either VehicleException ())
+    case result of
+      Left ex -> do clearScreen; putStrLn $ "\nErro: " ++ show ex; menuSearch
+      Right _ -> menuSearch
+
+
+searchVehicleById :: IO()
+searchVehicleById = do
+  clearScreen
+  lista <- readVehiclesFromJSON
+  when (null lista) $ throw NenhumVeiculoCadastrado
+
+  putStrLn "Identificador do Veículo: "
+  vehicleId <- getLine
+  
+  let veicReturn = getVehicle (read vehicleId :: Int) lista
+  when (isNothing veicReturn) $ throw VeiculoNaoEncontrado
+  let Just justVe = veicReturn
+  putStrLn "Veículo encontrado: "
+  putStrLn $ listVehicle [justVe]
+
+  putStrLn "Pressione ENTER para continuar. "
+  continue <- getLine
+  putStrLn "Continuando..."
+  clearScreen
+
+searchVehicleByPlate :: IO()
+searchVehicleByPlate = do
+  clearScreen
+  lista <- readVehiclesFromJSON
+  when (null lista) $ throw NenhumVeiculoCadastrado
+
+  putStrLn "Placa do Veículo: "
+  vehiclePlate <- getLine
+  
+  let veicReturn = getVehicleViaPlate vehiclePlate lista
+  when (isNothing veicReturn) $ throw VeiculoNaoEncontrado
+  let Just justVe = veicReturn
+  putStrLn "Veículo encontrado: "
+  putStrLn $ listVehicle [justVe]
+
+  putStrLn "Pressione ENTER para continuar. "
+  continue <- getLine
+  putStrLn "Continuando..."
+  clearScreen
 
 -- Add Vehicle
 optionAddVehicle :: IO()
@@ -204,9 +267,9 @@ getVehicle _ [] = Nothing
 getVehicle y (x:xs)  | y == vehicleId x = Just x
                      | otherwise = getVehicle y xs
 
-getVehicleViaPlate :: Int -> [Vehicle] -> Maybe Vehicle
+getVehicleViaPlate :: String -> [Vehicle] -> Maybe Vehicle
 getVehicleViaPlate _ [] = Nothing
-getVehicleViaPlate y (x:xs)  | y == vehicleId x = Just x
+getVehicleViaPlate y (x:xs)  | y == plate x = Just x
                      | otherwise = getVehicleViaPlate y xs
 
 printVehicles :: [Vehicle] -> IO ()
